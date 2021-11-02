@@ -53,7 +53,12 @@ qtcreator-*
 CATKIN_IGNORE
 
 # VSCode Files
-.vscode/c_cpp_properties.json
-.vscode/settings.json
+.vscode
 
+# macOS Files
 .DS_Store
+
+# Node.js File
+node_modules
+package-lock.json
+dist

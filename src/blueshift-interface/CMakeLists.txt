@@ -24,6 +24,12 @@ endif()
 
 ament_package()
 
+# build the node.js code before copying into install
+execute_process (
+    COMMAND bash -c "npm run build" args WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    OUTPUT_VARIABLE npmBuildOut  
+)
+
 # install rules added by ros2pkg_configure_nodejs
 install(FILES 
   package.json
