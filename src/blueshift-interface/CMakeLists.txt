@@ -32,15 +32,13 @@ execute_process (
 
 # install rules added by ros2pkg_configure_nodejs
 install(FILES 
-  package.json
-  DESTINATION share/${PROJECT_NAME}/
- )
+ package.json
+ DESTINATION share/${PROJECT_NAME}/
+)
  
-install(DIRECTORY 
-  config
-  dist
+install(DIRECTORY
   launch
-  node_modules
+  build
   DESTINATION share/${PROJECT_NAME}/
   OPTIONAL
  )

@@ -16,11 +16,13 @@ def generate_launch_description():
 	# revise path to your nodejs start file
     start_js_file = os.path.join(
         share_directory,
-        'dist',
+        'build',
         'index.js')
+    
+    print(start_js_file)
 
     start_javascript_node = Node(
-        name='test_node',
+        name='blueshift_interface',
         executable='node',
         output='screen',
         parameters=[{'use_sim_time': use_sim_time}],
