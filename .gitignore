@@ -60,5 +60,4 @@ CATKIN_IGNORE
 
 # Node.js File
 node_modules
-package-lock.json
 dist
