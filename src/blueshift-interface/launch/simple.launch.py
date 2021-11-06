@@ -47,7 +47,7 @@ def generate_launch_description():
         ],
         cwd=web_interface_share_directory
     )
-    #ld.add_action(start_web_interface)
+    ld.add_action(start_web_interface)
 
 
     return ld
