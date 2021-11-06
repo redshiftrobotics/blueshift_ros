@@ -29,17 +29,23 @@ execute_process (
     COMMAND bash -c "npm run build" args WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
     OUTPUT_VARIABLE npmBuildOut  
 )
+message(STATUS ${npmBuildOut})
 
 # install rules added by ros2pkg_configure_nodejs
 install(FILES 
  package.json
  DESTINATION share/${PROJECT_NAME}/
 )
- 
+
 install(DIRECTORY
   launch
   build
+  ros2-web-bridge
   DESTINATION share/${PROJECT_NAME}/
-  OPTIONAL
  )
- 
+
+install(DIRECTORY
+  bin
+  FILE_PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ
+  DESTINATION share/${PROJECT_NAME}/
+ )
