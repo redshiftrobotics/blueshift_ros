@@ -1,12 +1,17 @@
 import preprocess from 'svelte-preprocess';
+
+import { optimizeImports, optimizeCss } from "carbon-preprocess-svelte";
+
 import adapter from '@sveltejs/adapter-node';
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
 	// Consult https://github.com/sveltejs/svelte-preprocess
 	// for more information about preprocessors
-	preprocess: preprocess(),
-
+	preprocess: [
+		preprocess(),
+		optimizeImports()
+	],
 	kit: {
 		// hydrate the <div id="svelte"> element in src/app.html
 		target: '#svelte',
@@ -18,7 +23,12 @@ const config = {
 				host: 'HOST',
 				port: 'PORT'
 			}
-		})
+		}),
+		vite: {
+		  plugins: [
+			  process.env.NODE_ENV === "production" && optimizeCss()
+			],
+		},
 	}
 };
 
