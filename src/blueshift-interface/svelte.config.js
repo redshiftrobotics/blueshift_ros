@@ -26,7 +26,7 @@ const config = {
 		}),
 		vite: {
 		  plugins: [
-			  process.env.NODE_ENV === "production" && optimizeCss()
+			//   process.env.NODE_ENV === "production" && optimizeCss()
 			],
 		},
 	}
