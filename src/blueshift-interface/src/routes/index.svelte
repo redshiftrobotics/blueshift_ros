@@ -1,9 +1,18 @@
 <script>
-	import { Content, Grid, Row, Column, HeaderNav, HeaderNavMenu, HeaderNavItem, HeaderGlobalAction } from 'carbon-components-svelte';
+	import {
+		Content,
+		Grid,
+		Row,
+		Column,
+		HeaderNav,
+		HeaderNavMenu,
+		HeaderNavItem,
+		HeaderGlobalAction
+	} from 'carbon-components-svelte';
 	import Switcher20 from 'carbon-icons-svelte/lib/Switcher20';
 	import Header from '../components/header.svelte';
 
-	export let selectedCamera = "Loading...";
+	export let selectedCamera = 'Loading...';
 	export let cameras = [];
 </script>
 
@@ -11,10 +20,7 @@
 	<HeaderNav slot="middle_section">
 		<HeaderNavMenu bind:text={selectedCamera}>
 			{#each cameras as camera}
-				<HeaderNavItem
-					text="{camera}"
-					href="#"
-				/>
+				<HeaderNavItem text={camera} href="#" />
 			{/each}
 		</HeaderNavMenu>
 		<HeaderGlobalAction icon={Switcher20} href="/" />
