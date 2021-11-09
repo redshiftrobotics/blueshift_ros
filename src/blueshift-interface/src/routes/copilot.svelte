@@ -9,7 +9,7 @@
 	<Grid>
 		<Row>
 			<Column>
-				<h1>Pilot</h1>
+				<h1>Copilot</h1>
 			</Column>
 		</Row>
 	</Grid>
