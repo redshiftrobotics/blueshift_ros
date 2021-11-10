@@ -25,6 +25,8 @@
 	import MisuseOutline20 from 'carbon-icons-svelte/lib/MisuseOutline20';
 	import WarningAlt20 from 'carbon-icons-svelte/lib/WarningAlt20';
 	import WarningAltFilled20 from 'carbon-icons-svelte/lib/WarningAltFilled20';
+
+	import ErrorWarningStatus from './error_warning_status.svelte';
 </script>
 
 <Header company="Blueshift" platformName="Robotics">
@@ -33,7 +35,7 @@
 	</div>
 	<!-- Center buttons -->
 	<!-- I don't know if this is the correct way to add extra header elements, but it works lol -->
-	<HeaderUtilities>
+	<HeaderNav>
 		<!-- Add spacing to the right side with `--cds-spacing-05` otherwise they touch the divider -->
 		<div style="padding-right: var(--cds-spacing-05)">
 			<HeaderGlobalAction icon={Power20} />
@@ -46,13 +48,7 @@
 				<slot name="middle_section" />
 			</div>
 		{/if}
-
-		<HeaderNav>
-			<HeaderAction icon={MisuseOutline20} closeIcon={MisuseOutline20} />
-			<!-- icon and closeIcon should switch to the filled in version and add error/warning counter when there are errors/warnings -->
-			<HeaderAction icon={WarningAlt20} closeIcon={WarningAlt20} />
-		</HeaderNav>
-	</HeaderUtilities>
+	</HeaderNav>
 
 	<!-- Right side buttons -->
 	<HeaderUtilities>
@@ -60,5 +56,11 @@
 		<HeaderActionLink icon={SettingsAdjust20} href="/copilot" />
 		<HeaderActionLink icon={Debug20} href="/debug" />
 		<HeaderActionLink icon={Settings20} href="/settings" />
+		<HeaderNav>
+			<HeaderAction text="." icon={ErrorWarningStatus} />
+			<!-- <HeaderAction icon={MisuseOutline20} text="10" closeIcon={MisuseOutline20} /> -->
+			<!-- icon and closeIcon should switch to the filled in version and add error/warning counter when there are errors/warnings -->
+			<!-- <HeaderAction icon={WarningAlt20} closeIcon={WarningAlt20} /> -->
+		</HeaderNav>
 	</HeaderUtilities>
 </Header>
