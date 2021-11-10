@@ -59,16 +59,14 @@
 		<HeaderActionLink icon={Settings20} href="/settings" />
 		<HeaderNav>
 			<!--
-				this custom style is equivalent to action-text
-				it needs to be applied to the button element inside of HeaderAction for the text to show up
+				CustomHeaderAction is based on the source HeaderAction with a few chances
+				- `text` does not display any text, it just adds or removes the action-text class
+				- all properties are passed down to the icons (this enables them to access `numErrors` and `numWarnings`)
 			 -->
-			<HeaderAction
-				style="font-size: 16px;
-					line-height: 20px;
-					text-decoration: none;
-					color: #fff;
-					width: 100%;
-					padding: 0 1rem;"
+			<CustomHeaderAction
+				numErrors="1"
+				numWarnings="1"
+				text="true"
 				icon={ErrorWarningStatus}
 				closeIcon={ErrorWarningStatus}
 			/>
