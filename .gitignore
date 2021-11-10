@@ -56,7 +56,3 @@ CATKIN_IGNORE
 
 # macOS Files
 .DS_Store
-
-# Node.js File
-node_modules
-dist
