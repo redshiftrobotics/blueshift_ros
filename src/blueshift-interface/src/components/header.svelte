@@ -26,7 +26,8 @@
 	import WarningAlt20 from 'carbon-icons-svelte/lib/WarningAlt20';
 	import WarningAltFilled20 from 'carbon-icons-svelte/lib/WarningAltFilled20';
 
-	import ErrorWarningStatus from './error_warning_status.svelte';
+	import ErrorWarningStatus from '../components/error_warning_status.svelte';
+	import CustomHeaderAction from '../components/CustomHeaderAction.svelte';
 </script>
 
 <Header company="Blueshift" platformName="Robotics">
@@ -57,7 +58,20 @@
 		<HeaderActionLink icon={Debug20} href="/debug" />
 		<HeaderActionLink icon={Settings20} href="/settings" />
 		<HeaderNav>
-			<HeaderAction text="." icon={ErrorWarningStatus} />
+			<!--
+				this custom style is equivalent to action-text
+				it needs to be applied to the button element inside of HeaderAction for the text to show up
+			 -->
+			<HeaderAction
+				style="font-size: 16px;
+					line-height: 20px;
+					text-decoration: none;
+					color: #fff;
+					width: 100%;
+					padding: 0 1rem;"
+				icon={ErrorWarningStatus}
+				closeIcon={ErrorWarningStatus}
+			/>
 			<!-- <HeaderAction icon={MisuseOutline20} text="10" closeIcon={MisuseOutline20} /> -->
 			<!-- icon and closeIcon should switch to the filled in version and add error/warning counter when there are errors/warnings -->
 			<!-- <HeaderAction icon={WarningAlt20} closeIcon={WarningAlt20} /> -->

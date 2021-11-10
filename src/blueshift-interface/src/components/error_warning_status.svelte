@@ -5,12 +5,16 @@
 	import MisuseOutline20 from 'carbon-icons-svelte/lib/MisuseOutline20';
 	import WarningAlt20 from 'carbon-icons-svelte/lib/WarningAlt20';
 	import WarningAltFilled20 from 'carbon-icons-svelte/lib/WarningAltFilled20';
+
+	export let style;
 </script>
 
-<MisuseOutline20 style="fill: var(--cds-support-01)" />
-<span class="span-text" style="margin-right: var(--cds-spacing-04);">1</span>
-<WarningAlt20 style="fill: var(--cds-support-03)" />
-<span class="span-text">1</span>
+<div style={style}>
+	<MisuseOutline20 style="fill: var(--cds-support-01)" />
+	<span class="span-text" style="margin-right: var(--cds-spacing-04);">1</span>
+	<WarningAlt20 style="fill: var(--cds-support-03)" />
+	<span class="span-text" style="margin-right: var(--cds-spacing-04);">1</span>
+</div>
 
 <style>
 	.span-text {
