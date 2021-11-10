@@ -4,14 +4,6 @@
 		HeaderUtilities,
 		HeaderActionLink,
 		SkipToContent,
-		HeaderNavItem,
-		HeaderNavMenu,
-		HeaderAction,
-		ButtonSet,
-		Button,
-		ContentSwitcher,
-		Switch,
-		TooltipIcon,
 		HeaderGlobalAction,
 		HeaderNav
 	} from 'carbon-components-svelte';
@@ -21,10 +13,11 @@
 	import Drone20 from 'carbon-icons-svelte/lib/Drone20';
 	import Power20 from 'carbon-icons-svelte/lib/Power20';
 	import Restart20 from 'carbon-icons-svelte/lib/Restart20';
-	import Misuse20 from 'carbon-icons-svelte/lib/Misuse20';
-	import MisuseOutline20 from 'carbon-icons-svelte/lib/MisuseOutline20';
-	import WarningAlt20 from 'carbon-icons-svelte/lib/WarningAlt20';
-	import WarningAltFilled20 from 'carbon-icons-svelte/lib/WarningAltFilled20';
+
+	import Question from "carbon-pictograms-svelte/lib/Question.svelte";
+	import Envelope from "carbon-pictograms-svelte/lib/Envelope.svelte";
+	import SelectProduct from "carbon-pictograms-svelte/lib/SelectProduct.svelte";
+	import CodeSyntax from "carbon-pictograms-svelte/lib/CodeSyntax.svelte";
 
 	import ErrorWarningStatus from '../components/error_warning_status.svelte';
 	import CustomHeaderAction from '../components/CustomHeaderAction.svelte';
@@ -69,10 +62,14 @@
 				text="true"
 				icon={ErrorWarningStatus}
 				closeIcon={ErrorWarningStatus}
-			/>
-			<!-- <HeaderAction icon={MisuseOutline20} text="10" closeIcon={MisuseOutline20} /> -->
-			<!-- icon and closeIcon should switch to the filled in version and add error/warning counter when there are errors/warnings -->
-			<!-- <HeaderAction icon={WarningAlt20} closeIcon={WarningAlt20} /> -->
+			>
+				<slot name="notifications">
+					<!-- <Question />
+					<SelectProduct />
+					<Envelope /> -->
+					<CodeSyntax />
+				</slot>
+			</CustomHeaderAction>
 		</HeaderNav>
 	</HeaderUtilities>
 </Header>

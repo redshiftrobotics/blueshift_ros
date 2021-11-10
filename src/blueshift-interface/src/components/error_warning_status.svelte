@@ -1,6 +1,4 @@
 <script>
-	import { Header } from 'carbon-components-svelte';
-
 	import Misuse20 from 'carbon-icons-svelte/lib/Misuse20';
 	import MisuseOutline20 from 'carbon-icons-svelte/lib/MisuseOutline20';
 	import WarningAlt20 from 'carbon-icons-svelte/lib/WarningAlt20';
