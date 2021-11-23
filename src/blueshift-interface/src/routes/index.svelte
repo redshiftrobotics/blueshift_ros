@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import {
 		Content,
 		Grid,
@@ -9,10 +9,12 @@
 		HeaderNavItem,
 		HeaderGlobalAction
 	} from 'carbon-components-svelte';
-	
+
 	import Grid20 from 'carbon-icons-svelte/lib/Grid20';
 	import Checkbox20 from 'carbon-icons-svelte/lib/Checkbox20';
 	import Header from '../components/header.svelte';
+
+	import { test } from '$lib/ros_connect'
 
 	let selectedCamera = 'Loading...';
 	let cameras = [];

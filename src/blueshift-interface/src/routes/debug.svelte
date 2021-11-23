@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import { Content, Grid, Row, Column } from 'carbon-components-svelte';
 	import Header from '../components/header.svelte';
 </script>
