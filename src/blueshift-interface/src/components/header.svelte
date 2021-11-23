@@ -1,4 +1,5 @@
 <script>
+	import { onMount } from 'svelte';
 	import {
 		Header,
 		HeaderUtilities,
@@ -14,6 +15,8 @@
 	import Drone20 from 'carbon-icons-svelte/lib/Drone20';
 	import Power20 from 'carbon-icons-svelte/lib/Power20';
 	import Restart20 from 'carbon-icons-svelte/lib/Restart20';
+	import Maximize20 from 'carbon-icons-svelte/lib/Maximize20';
+	import Minimize20 from 'carbon-icons-svelte/lib/Minimize20';
 
 	import Question from 'carbon-pictograms-svelte/lib/Question.svelte';
 	import Envelope from 'carbon-pictograms-svelte/lib/Envelope.svelte';
@@ -24,7 +27,56 @@
 	import CustomHeaderAction from '../components/CustomHeaderAction.svelte';
 
 	export let notifications = [];
+
+	// Full screen handler (modified from: https://github.com/codechips/svelte-fullscreen-example)
+	let fs = false;
+	$: fullscreenIcon = fs ? Minimize20 : Maximize20;
+	let fsToggle;
+
+	onMount(() => {
+		// boring plain js fullscreen support stuff below
+		const noop = () => {};
+
+		const fullscreenSupport = !!(
+			document.fullscreenEnabled ||
+			document.webkitFullscreenEnabled ||
+			document.mozFullScreenEnabled ||
+			document.msFullscreenEnabled ||
+			false
+		);
+
+		const exitFullscreen = (
+			document.exitFullscreen ||
+			document.mozCancelFullScreen ||
+			document.webkitExitFullscreen ||
+			document.msExitFullscreen ||
+			noop
+		).bind(document);
+
+		const requestFullscreen = (fsContainer) => {
+			const requestFS = (
+				fsContainer.requestFullscreen ||
+				fsContainer.mozRequestFullScreen ||
+				fsContainer.webkitRequestFullscreen ||
+				fsContainer.msRequestFullscreen ||
+				noop
+			).bind(document.documentElement);
+			requestFS();
+		};
+
+		fsToggle = () => {
+			if (!fullscreenSupport) return;
+
+			if (fs) {
+				exitFullscreen();
+			} else {
+				requestFullscreen(document.documentElement);
+			}
+			fs = !fs;
+		};
+	});
 </script>
+
 <Header company="Blueshift" platformName="Robotics">
 	<div slot="skip-to-content">
 		<SkipToContent />
@@ -44,6 +96,16 @@
 				<slot name="middle_section" />
 			</div>
 		{/if}
+	</HeaderNav>
+
+	<!-- Fullscreen Button -->
+	<HeaderNav>
+		<HeaderGlobalAction
+			icon={fullscreenIcon}
+			on:click={() => {
+				fsToggle();
+			}}
+		/>
 	</HeaderNav>
 
 	<!-- Right side buttons -->
@@ -66,16 +128,17 @@
 				closeIcon={ErrorWarningStatus}
 			>
 				{#if notifications.length > 0}
-						{#each notifications as notification}
-							<ToastNotification
-								title="Error"
-								subtitle="An internal server error occurred."
-								caption={notification}
-								style="width: 16rem; margin-top: 0;" 
-							/>
-							<!-- width: 16; makes the notification the width of the panel -->
-							<!-- margin-top: 0; removes the margin on the topmost notification so the spacing is even -->
-						{/each}
+					{#each notifications as notification}
+						<ToastNotification
+							title="Error"
+							kind="error"
+							subtitle="An internal server error occurred."
+							caption={notification}
+							style="width: 16rem; margin-top: 0;"
+						/>
+						<!-- width: 16; makes the notification the width of the panel -->
+						<!-- margin-top: 0; removes the margin on the topmost notification so the spacing is even -->
+					{/each}
 				{:else}
 					<div style="text-align: center; margin-top: var(--cds-spacing-09)">
 						<!--
