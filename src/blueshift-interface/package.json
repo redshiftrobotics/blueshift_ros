@@ -19,6 +19,7 @@
 		"carbon-components-svelte": "^0.47.3",
 		"carbon-pictograms-svelte": "^12.0.0",
 		"carbon-preprocess-svelte": "^0.6.0",
+		"esbuild": "^0.13.15",
 		"eslint": "^7.32.0",
 		"eslint-config-prettier": "^8.3.0",
 		"eslint-plugin-svelte3": "^3.2.1",

@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import { onMount } from 'svelte';
 	import {
 		Header,
@@ -7,16 +7,23 @@
 		SkipToContent,
 		HeaderGlobalAction,
 		HeaderNav,
-		ToastNotification
+		ToastNotification,
+		Theme
 	} from 'carbon-components-svelte';
+	import type { CarbonTheme } from 'carbon-components-svelte/types/Theme/Theme.svelte';
+
 	import Settings20 from 'carbon-icons-svelte/lib/Settings20';
 	import Debug20 from 'carbon-icons-svelte/lib/Debug20';
 	import SettingsAdjust20 from 'carbon-icons-svelte/lib/SettingsAdjust20';
 	import Drone20 from 'carbon-icons-svelte/lib/Drone20';
 	import Power20 from 'carbon-icons-svelte/lib/Power20';
 	import Restart20 from 'carbon-icons-svelte/lib/Restart20';
+
 	import Maximize20 from 'carbon-icons-svelte/lib/Maximize20';
 	import Minimize20 from 'carbon-icons-svelte/lib/Minimize20';
+
+	import Sun20 from 'carbon-icons-svelte/lib/Sun20';
+	import Moon20 from 'carbon-icons-svelte/lib/Moon20';
 
 	import Question from 'carbon-pictograms-svelte/lib/Question.svelte';
 	import Envelope from 'carbon-pictograms-svelte/lib/Envelope.svelte';
@@ -39,16 +46,22 @@
 
 		const fullscreenSupport = !!(
 			document.fullscreenEnabled ||
+			// @ts-ignore
 			document.webkitFullscreenEnabled ||
+			// @ts-ignore
 			document.mozFullScreenEnabled ||
+			// @ts-ignore
 			document.msFullscreenEnabled ||
 			false
 		);
 
 		const exitFullscreen = (
 			document.exitFullscreen ||
+			// @ts-ignore
 			document.mozCancelFullScreen ||
+			// @ts-ignore
 			document.webkitExitFullscreen ||
+			// @ts-ignore
 			document.msExitFullscreen ||
 			noop
 		).bind(document);
@@ -75,7 +88,15 @@
 			fs = !fs;
 		};
 	});
+	
+	// Theme code
+	const darkTheme : CarbonTheme = "g100";
+	const lightTheme : CarbonTheme = "white";
+	let theme : CarbonTheme = darkTheme;
+	$: themeIcon = theme === lightTheme ? Moon20 : Sun20;
 </script>
+
+<Theme bind:theme persist persistKey="__carbon-theme" />
 
 <Header company="Blueshift" platformName="Robotics">
 	<div slot="skip-to-content">
@@ -104,6 +125,16 @@
 			icon={fullscreenIcon}
 			on:click={() => {
 				fsToggle();
+			}}
+		/>
+		<HeaderGlobalAction
+			icon={themeIcon}
+			on:click={() => {
+				if (theme === lightTheme) {
+					theme = darkTheme;
+				} else {
+					theme = lightTheme;
+				}
 			}}
 		/>
 	</HeaderNav>
