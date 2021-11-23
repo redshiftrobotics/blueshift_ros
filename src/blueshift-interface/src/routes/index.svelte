@@ -12,13 +12,14 @@
 	import Switcher20 from 'carbon-icons-svelte/lib/Switcher20';
 	import Header from '../components/header.svelte';
 
-	export let selectedCamera = 'Loading...';
-	export let cameras = [];
+	let selectedCamera = 'Loading...';
+	let cameras = [];
+	let notifications = [1,2,3];
 </script>
 
-<Header>
+<Header bind:notifications={notifications}>
 	<HeaderNav slot="middle_section">
-		<HeaderNavMenu bind:text={selectedCamera}>
+		<HeaderNavMenu text={selectedCamera}>
 			{#each cameras as camera}
 				<HeaderNavItem text={camera} href="#" />
 			{/each}

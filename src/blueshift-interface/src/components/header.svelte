@@ -5,7 +5,8 @@
 		HeaderActionLink,
 		SkipToContent,
 		HeaderGlobalAction,
-		HeaderNav
+		HeaderNav,
+		ToastNotification
 	} from 'carbon-components-svelte';
 	import Settings20 from 'carbon-icons-svelte/lib/Settings20';
 	import Debug20 from 'carbon-icons-svelte/lib/Debug20';
@@ -14,15 +15,16 @@
 	import Power20 from 'carbon-icons-svelte/lib/Power20';
 	import Restart20 from 'carbon-icons-svelte/lib/Restart20';
 
-	import Question from "carbon-pictograms-svelte/lib/Question.svelte";
-	import Envelope from "carbon-pictograms-svelte/lib/Envelope.svelte";
-	import SelectProduct from "carbon-pictograms-svelte/lib/SelectProduct.svelte";
-	import CodeSyntax from "carbon-pictograms-svelte/lib/CodeSyntax.svelte";
+	import Question from 'carbon-pictograms-svelte/lib/Question.svelte';
+	import Envelope from 'carbon-pictograms-svelte/lib/Envelope.svelte';
+	import SelectProduct from 'carbon-pictograms-svelte/lib/SelectProduct.svelte';
+	import CodeSyntax from 'carbon-pictograms-svelte/lib/CodeSyntax.svelte';
 
 	import ErrorWarningStatus from '../components/error_warning_status.svelte';
 	import CustomHeaderAction from '../components/CustomHeaderAction.svelte';
-</script>
 
+	export let notifications = [];
+</script>
 <Header company="Blueshift" platformName="Robotics">
 	<div slot="skip-to-content">
 		<SkipToContent />
@@ -63,12 +65,28 @@
 				icon={ErrorWarningStatus}
 				closeIcon={ErrorWarningStatus}
 			>
-				<slot name="notifications">
-					<!-- <Question />
-					<SelectProduct />
-					<Envelope /> -->
-					<CodeSyntax />
-				</slot>
+				{#if notifications.length > 0}
+						{#each notifications as notification}
+							<ToastNotification
+								title="Error"
+								subtitle="An internal server error occurred."
+								caption={notification}
+								style="width: 16rem; margin-top: 0;" 
+							/>
+							<!-- width: 16; makes the notification the width of the panel -->
+							<!-- margin-top: 0; removes the margin on the topmost notification so the spacing is even -->
+						{/each}
+				{:else}
+					<div style="text-align: center; margin-top: var(--cds-spacing-09)">
+						<!--
+						<Question />
+						<SelectProduct />
+						<Envelope /> 
+					-->
+						<CodeSyntax />
+						<p style="margin-top: var(--cds-spacing-04)">No notifications</p>
+					</div>
+				{/if}
 			</CustomHeaderAction>
 		</HeaderNav>
 	</HeaderUtilities>
