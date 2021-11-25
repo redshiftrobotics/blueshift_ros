@@ -15,21 +15,6 @@ def generate_launch_description():
     ld = LaunchDescription()
 
     web_interface_share_directory = get_package_share_directory('blueshift-interface')
-
-    # Web Bridge Launcher
-    start_web_bridge_file = os.path.join(
-        web_interface_share_directory,
-        'bin',
-        'launch_ros2-web-bridge.sh',
-    )
-
-    start_web_bridge = ExecuteProcess(
-        cmd = [start_web_bridge_file, os.path.join(web_interface_share_directory, 'ros2-web-bridge', 'bin','rosbridge.js')],
-        name = 'ros2-web-bridge',
-        log_cmd = True,
-        shell = True
-    )
-    ld.add_action(start_web_bridge)
     
     # Web Interface Launcher
     start_interface_file = os.path.join(

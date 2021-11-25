@@ -7,9 +7,7 @@ endif()
 
 # find dependencies
 find_package(ament_cmake REQUIRED)
-# uncomment the following section in order to fill in
-# further dependencies manually.
-# find_package(<dependency> REQUIRED)
+find_package(rosbridge_suite REQUIRED)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
@@ -25,11 +23,25 @@ endif()
 ament_package()
 
 # build the node.js code before copying into install
-execute_process (
-    COMMAND bash -c "npm run build" args WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-    OUTPUT_VARIABLE npmBuildOut  
+add_custom_command(
+  OUTPUT
+    ${CMAKE_SOURCE_DIR}/build/index.js
+  COMMAND
+    cd ${CMAKE_SOURCE_DIR} && npm run build
+  COMMENT
+    "Building web interface with SvelteKit"
+  VERBATIM
 )
-message(STATUS ${npmBuildOut})
+
+add_custom_target(
+  web_interface ALL
+  DEPENDS ${CMAKE_SOURCE_DIR}/build/index.js
+)
+
+# add_custom_target (npm-target ALL
+#   COMMAND cd ${CMAKE_SOURCE_DIR} && npm run build
+# )
+
 
 # install rules added by ros2pkg_configure_nodejs
 install(FILES 
@@ -40,12 +52,5 @@ install(FILES
 install(DIRECTORY
   launch
   build
-  ros2-web-bridge
   DESTINATION share/${PROJECT_NAME}/
- )
-
-install(DIRECTORY
-  bin
-  FILE_PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ
-  DESTINATION share/${PROJECT_NAME}/
- )
+)
