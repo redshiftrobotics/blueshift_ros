@@ -48,9 +48,20 @@ function createNotificationManager(toastDisplayTime = 2500) {
 				if (notification.type === 'toast') {
 					update((notifications) => notifications.filter((n) => n.id !== notification.id));
 				} else if (notification.type === 'permanent') {
-					update((notifications) => notifications.filter((n) => n.id !== notification.id));
-					notification.type = 'permanent-no-toast';
-					update((notifications) =>[...notifications, notification]);
+					update((notifications) => {
+						// if it is still in the array (the user didn't manually remove it)
+						// then remove it, and add it back with the new type
+						if (notifications.some(n => n.id === notification.id)) {
+							// remove it
+							let notifications_without_notification = notifications.filter((n) => n.id !== notification.id);
+							
+							// add it back with the new type and sort the array to make sure everythign is in the right order
+							notification.type = 'permanent-no-toast';
+							return [...notifications_without_notification, notification].sort((a, b) => a.id - b.id);
+						} else {
+							return notifications;
+						}
+					});
 				}
 			}, toastDisplayTime);
 		},
@@ -58,4 +69,4 @@ function createNotificationManager(toastDisplayTime = 2500) {
 	};
 }
 
-export const notificationManager = createNotificationManager(5000);
+export const notificationManager = createNotificationManager();

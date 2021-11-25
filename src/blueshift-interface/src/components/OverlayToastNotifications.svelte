@@ -3,7 +3,8 @@
 
 	import { notificationManager } from '$lib/notification_manager';
 	import type { Notification } from '$lib/notification_manager';
-import { loop_guard } from 'svelte/internal';
+
+	import { fly } from 'svelte/transition';
 </script>
 
 <div class="box">
@@ -16,13 +17,17 @@ import { loop_guard } from 'svelte/internal';
 	>
 		{#each $notificationManager as notification}
 			{#if notification.type !== 'permanent-no-toast'}
-				<InlineNotification
-					lowContrast
-					hideCloseButton
-					title={notification.title}
-					kind={notification.level}
-					subtitle={notification.subtitle}
-				/>
+				<div
+					transition:fly={{ x: 300 }}
+				>
+					<InlineNotification
+						lowContrast
+						hideCloseButton
+						title={notification.title}
+						kind={notification.level}
+						subtitle={notification.subtitle}
+					/>
+				</div>
 			{/if}
 		{/each}
 	</div>

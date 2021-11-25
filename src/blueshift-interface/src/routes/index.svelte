@@ -32,8 +32,8 @@
 	import log from '$lib/logger';
 
 	// testing only
-	log.warn("test warning");
-	log.error("test error");
+	setTimeout(() => {log.warn("test warning")}, 1000);
+	setTimeout(() => {log.error("test error")}, 1500);
 
 	let selectedCamera = 'Loading...';
 	let cameras = [];

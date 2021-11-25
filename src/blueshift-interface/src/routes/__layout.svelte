@@ -19,9 +19,9 @@
 		};
 
 		// testing only
-		setTimeout(() => {
-			throw new Error('test');
-		}, 500);
+		// setTimeout(() => {
+		// 	throw new Error('test');
+		// }, 500);
 	});
 </script>
 
