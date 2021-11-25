@@ -1,8 +1,11 @@
+# macOS files
 .DS_Store
-node_modules
-/build
-/.svelte-kit
-/package
-ros2-web-bridge
 
+# Svelte/Node files
+node_modules
+/.svelte-kit
 !src/lib
+/build
+/package
+package-lock.json
+pnpm-lock.yaml
