@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.8)
-project(blueshift-interface)
+project(blueshift_interface)
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
@@ -20,14 +20,12 @@ if(BUILD_TESTING)
   ament_lint_auto_find_test_dependencies()
 endif()
 
-ament_package()
-
 # build the node.js code before copying into install
 add_custom_command(
   OUTPUT
     ${CMAKE_SOURCE_DIR}/build/index.js
   COMMAND
-    cd ${CMAKE_SOURCE_DIR} && npm run build
+    cd ${CMAKE_SOURCE_DIR} && pnpm i && pnpm run build
   COMMENT
     "Building web interface with SvelteKit"
   VERBATIM
@@ -54,3 +52,5 @@ install(DIRECTORY
   build
   DESTINATION share/${PROJECT_NAME}/
 )
+
+ament_package()
