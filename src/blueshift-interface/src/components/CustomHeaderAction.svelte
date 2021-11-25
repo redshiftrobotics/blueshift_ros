@@ -37,15 +37,14 @@
 	let refPanel = null;
 </script>
 
-<!-- Don't close the panel whenver a notification is dismissed -->
-<!-- <svelte:window
+<svelte:window
 	on:click={({ target }) => {
 		if (isOpen && !ref.contains(target) && !refPanel.contains(target)) {
 			isOpen = false;
 			dispatch('close');
 		}
 	}}
-/> -->
+/>
 
 <div>
 	<button

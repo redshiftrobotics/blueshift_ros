@@ -92,6 +92,9 @@
 	const lightTheme: CarbonTheme = 'white';
 	let theme: CarbonTheme = darkTheme;
 	$: themeIcon = theme === lightTheme ? Moon20 : Sun20;
+
+	// Notification panel state
+	let isOpen = false;
 </script>
 
 <Theme bind:theme persist persistKey="__carbon-theme" />
@@ -151,10 +154,13 @@
 			 -->
 			<CustomHeaderAction
 				numErrors={$notificationManager.filter((n) => n.level === 'error').length}
-				numWarnings={$notificationManager.filter((n) => ['warning', 'warning-alt'].includes(n.level)).length}
+				numWarnings={$notificationManager.filter((n) =>
+					['warning', 'warning-alt'].includes(n.level)
+				).length}
 				text="true"
 				icon={ErrorWarningStatus}
 				closeIcon={ErrorWarningStatus}
+				bind:isOpen
 			>
 				{#if $notificationManager.length > 0}
 					{#each $notificationManager as notification}
@@ -168,6 +174,11 @@
 								style="width: 16rem; margin-top: 0;"
 								on:close={() => {
 									notificationManager.removeNotification(notification.id);
+									// make sure the notification panel stays open when a notification is dismissed
+									// TODO: this is a hack, find a better way to do this
+									setTimeout(() => {
+										isOpen = true;
+									}, 1);
 								}}
 							/>
 							<!-- width: 16; makes the notification the width of the panel -->
