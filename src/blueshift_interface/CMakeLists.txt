@@ -25,7 +25,11 @@ add_custom_command(
   OUTPUT
     ${CMAKE_SOURCE_DIR}/build/index.js
   COMMAND
-    cd ${CMAKE_SOURCE_DIR} && pnpm i && pnpm run build
+    echo "Installing all build dependencies" && cd ${CMAKE_SOURCE_DIR} && pnpm i # Install all dependencies
+  COMMAND
+    echo "Building the interface" && cd ${CMAKE_SOURCE_DIR} && pnpm run build # Build the site
+  COMMAND
+    echo "Installing production dependencies" && cd ${CMAKE_SOURCE_DIR} && rm -rf node_modules && pnpm i --only=prod # Remove all the dependenceis and then only reinstall the production ones
   COMMENT
     "Building web interface with SvelteKit"
   VERBATIM
@@ -50,7 +54,13 @@ install(FILES
 install(DIRECTORY
   launch
   build
+  node_modules
   DESTINATION share/${PROJECT_NAME}/
+)
+
+# Redownload all the dependencies (dev and production) incase the user is doing more development in the dev environment
+execute_process (
+    COMMAND bash -c "pnpm i" args WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
 )
 
 ament_package()

@@ -14,7 +14,7 @@ def generate_launch_description():
 
     ld = LaunchDescription()
 
-    web_interface_share_directory = get_package_share_directory('blueshift-interface')
+    web_interface_share_directory = get_package_share_directory('blueshift_interface')
     
     # Web Interface Launcher
     start_interface_file = os.path.join(

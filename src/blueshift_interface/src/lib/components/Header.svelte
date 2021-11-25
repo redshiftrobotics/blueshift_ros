@@ -31,7 +31,7 @@
 
 	import ErrorWarningStatus from './ErrorWarningStatus.svelte';
 	import CustomHeaderAction from './CustomHeaderAction.svelte';
-	import { notificationManager } from '$lib/notification_manager';
+	import { notificationManager } from '$lib/ts/notification_manager';
 
 	// Full screen handler (modified from: https://github.com/codechips/svelte-fullscreen-example)
 	let fs = false;
