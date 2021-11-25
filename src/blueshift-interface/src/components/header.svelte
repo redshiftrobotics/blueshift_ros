@@ -163,7 +163,7 @@
 				bind:isOpen
 			>
 				{#if $notificationManager.length > 0}
-					{#each $notificationManager as notification}
+					{#each $notificationManager as notification (notification.id)}
 						{#if notification.type !== 'toast'}
 							<ToastNotification
 								lowContrast

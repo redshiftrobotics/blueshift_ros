@@ -15,7 +15,7 @@
 			bottom: 20px;
 			width: 20rem;"
 	>
-		{#each $notificationManager as notification}
+		{#each $notificationManager as notification (notification.id)}
 			{#if notification.type !== 'permanent-no-toast'}
 				<div
 					transition:fly={{ x: 300 }}
