@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { notificationManager } from '$lib/notification_manager';
+	import { notificationManager } from '$lib/ts/notification_manager';
 
-	import OverlayToastNotifications from '../components/OverlayToastNotifications.svelte';
+	import OverlayToastNotifications from '$lib/components/OverlayToastNotifications.svelte';
 
 	import { onMount } from 'svelte';
 	import { dev } from '$app/env';

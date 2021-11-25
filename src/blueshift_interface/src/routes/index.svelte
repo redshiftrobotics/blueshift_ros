@@ -13,23 +13,23 @@
 	import Grid20 from 'carbon-icons-svelte/lib/Grid20';
 	import Checkbox20 from 'carbon-icons-svelte/lib/Checkbox20';
 
-	import Header from '../components/Header.svelte';
+	import Header from '$lib/components/Header.svelte';
 
-	import { robotIP } from '$lib/ros_communication';
+	import { robotIP } from '$lib/ts/ros_communication';
 	import {
 		GamepadState,
 		registerGamepadConnectedListener,
 		registerGamepadDisconnectedListener,
 		setupGamepad
-	} from '$lib/gamepad_communication';
+	} from '$lib/ts/gamepad_communication';
 
-	import { notificationManager } from '$lib/notification_manager';
-	import type { Notification } from '$lib/notification_manager';
+	import { notificationManager } from '$lib/ts/notification_manager';
+	import type { Notification } from '$lib/ts/notification_manager';
 
 	import type { Readable } from 'svelte/store';
 	import { onMount } from 'svelte';
 
-	import log from '$lib/logger';
+	import log from '$lib/ts/logger';
 
 	// testing only
 	setTimeout(() => {log.warn("test warning")}, 1000);
