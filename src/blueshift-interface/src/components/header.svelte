@@ -151,7 +151,7 @@
 			 -->
 			<CustomHeaderAction
 				numErrors={$notificationManager.filter((n) => n.level === 'error').length}
-				numWarnings={$notificationManager.filter((n) => n.level in ['warning', 'warning-alt']).length}
+				numWarnings={$notificationManager.filter((n) => ['warning', 'warning-alt'].includes(n.level)).length}
 				text="true"
 				icon={ErrorWarningStatus}
 				closeIcon={ErrorWarningStatus}

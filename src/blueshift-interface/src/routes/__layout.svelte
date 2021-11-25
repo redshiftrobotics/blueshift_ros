@@ -7,21 +7,19 @@
 	import { dev } from '$app/env';
 
 	onMount(() => {
-		// This handles any errors that were generated from broken code
+		// This generates notifications any errors that were generated from broken code
 		window.onerror = function (msg, source, lineNo, columnNo, error) {
 			notificationManager.addNotification({
-				title: `${error.name}: ${error.message}`,
+				title: `JS ${error.name}: ${error.message}`,
 				level: 'error',
-				subtitle: source,
-				caption: `${lineNo}:${columnNo}`,
+				subtitle: `${source}:${lineNo}:${columnNo}`,
+				caption: new Date().toLocaleString(),
 				type: 'permanent'
 			});
-			console.log(error.message, error.name);
 		};
 
+		// testing only
 		setTimeout(() => {
-			//console.warn('test');
-			//console.trace();
 			throw new Error('test');
 		}, 500);
 	});
