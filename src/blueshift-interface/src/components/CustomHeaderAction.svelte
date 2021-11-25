@@ -87,8 +87,4 @@
 		width: 100%;
 		padding: 0 1rem;
 	}
-	.action-text > span {
-		margin-left: 0.75rem;
-		vertical-align: top;
-	}
 </style>

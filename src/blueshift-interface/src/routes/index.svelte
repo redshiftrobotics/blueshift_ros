@@ -25,7 +25,6 @@
 
 	import { notificationManager } from '$lib/notification_manager';
 	import type { Notification } from '$lib/notification_manager';
-	import OverlayToastNotifications from '../components/OverlayToastNotifications.svelte';
 
 	import type { Readable } from 'svelte/store';
 	import { onMount } from 'svelte';
@@ -114,5 +113,3 @@
 		</Grid>
 	</Content>
 {/if}
-
-<OverlayToastNotifications />
