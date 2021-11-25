@@ -7,13 +7,14 @@
 	import { fly } from 'svelte/transition';
 </script>
 
-<div class="box">
+<div class="notification-container">
 	<div
 		style="
 			position: absolute;
 			right: 20px;
 			bottom: 20px;
-			width: 20rem;"
+			width: 20rem;
+			overflow: hidden;"
 	>
 		{#each $notificationManager as notification (notification.id)}
 			{#if notification.type !== 'permanent-no-toast'}
@@ -34,7 +35,7 @@
 </div>
 
 <style>
-	.box {
+	.notification-container {
 		position: relative;
 		width: 100%;
 		height: 100%;
