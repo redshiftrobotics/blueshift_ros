@@ -12,7 +12,8 @@
 
 	import Grid20 from 'carbon-icons-svelte/lib/Grid20';
 	import Checkbox20 from 'carbon-icons-svelte/lib/Checkbox20';
-	import Header from '../components/header.svelte';
+
+	import Header from '../components/Header.svelte';
 
 	import { robotIP } from '$lib/ros_communication';
 	import {
@@ -22,12 +23,30 @@
 		setupGamepad
 	} from '$lib/gamepad_communication';
 
+	import type { Notification } from '$lib/notification_manager';
+	import OverlayToastNotifications from '../components/OverlayToastNotifications.svelte';
+
 	import type { Readable } from 'svelte/store';
 	import { onMount } from 'svelte';
 
 	let selectedCamera = 'Loading...';
 	let cameras = [];
-	let notifications = [1, 2, 3];
+	let notifications: Notification[] = [
+		{
+			id: 0,
+			title: 'Notification 1',
+			subtitle: 'This is a notification',
+			level: 'info',
+			type: 'permanent'
+		},
+		{
+			id: 1,
+			title: 'Notification 2',
+			subtitle: 'This is a notification',
+			level: 'info',
+			type: 'toast'
+		}
+	];
 
 	let mode = 'one_cam';
 	$: cameraIcon = mode == 'one_cam' ? Grid20 : Checkbox20;
@@ -49,11 +68,13 @@
 
 <Header bind:notifications>
 	<HeaderNav slot="middle_section">
-		<HeaderNavMenu text={selectedCamera}>
-			{#each cameras as camera}
-				<HeaderNavItem text={camera} href="#" />
-			{/each}
-		</HeaderNavMenu>
+		{#if mode == 'one_cam'}
+			<HeaderNavMenu text={selectedCamera}>
+				{#each cameras as camera}
+					<HeaderNavItem text={camera} href="#" />
+				{/each}
+			</HeaderNavMenu>
+		{/if}
 		<HeaderGlobalAction
 			icon={cameraIcon}
 			on:click={() => {
@@ -69,7 +90,6 @@
 
 {#if mode == 'one_cam'}
 	<Content style="padding: var(--cds-spacing-05);">
-		{JSON.stringify($gamepadState)}
 		<!-- padding: var(--cds-spacing-05); decrease padding all around the camera display -->
 		<Grid style="max-width: 100%">
 			<Row>
@@ -96,3 +116,5 @@
 		</Grid>
 	</Content>
 {/if}
+
+<OverlayToastNotifications bind:notifications />

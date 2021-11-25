@@ -24,14 +24,13 @@
 
 	import Sun20 from 'carbon-icons-svelte/lib/Sun20';
 	import Moon20 from 'carbon-icons-svelte/lib/Moon20';
-
 	import Question from 'carbon-pictograms-svelte/lib/Question.svelte';
 	import Envelope from 'carbon-pictograms-svelte/lib/Envelope.svelte';
 	import SelectProduct from 'carbon-pictograms-svelte/lib/SelectProduct.svelte';
 	import CodeSyntax from 'carbon-pictograms-svelte/lib/CodeSyntax.svelte';
 
-	import ErrorWarningStatus from '../components/error_warning_status.svelte';
-	import CustomHeaderAction from '../components/CustomHeaderAction.svelte';
+	import ErrorWarningStatus from './ErrorWarningStatus.svelte';
+	import CustomHeaderAction from './CustomHeaderAction.svelte';
 
 	export let notifications = [];
 
@@ -88,11 +87,11 @@
 			fs = !fs;
 		};
 	});
-	
+
 	// Theme code
-	const darkTheme : CarbonTheme = "g100";
-	const lightTheme : CarbonTheme = "white";
-	let theme : CarbonTheme = darkTheme;
+	const darkTheme: CarbonTheme = 'g100';
+	const lightTheme: CarbonTheme = 'white';
+	let theme: CarbonTheme = darkTheme;
 	$: themeIcon = theme === lightTheme ? Moon20 : Sun20;
 </script>
 
@@ -160,15 +159,21 @@
 			>
 				{#if notifications.length > 0}
 					{#each notifications as notification}
-						<ToastNotification
-							title="Error"
-							kind="error"
-							subtitle="An internal server error occurred."
-							caption={notification}
-							style="width: 16rem; margin-top: 0;"
-						/>
-						<!-- width: 16; makes the notification the width of the panel -->
-						<!-- margin-top: 0; removes the margin on the topmost notification so the spacing is even -->
+						{#if notification.type === 'permanent'}
+							<ToastNotification
+								lowContrast
+								title={notification.title}
+								kind={notification.level}
+								subtitle={notification.subtitle}
+								caption={notification.caption}
+								style="width: 16rem; margin-top: 0;"
+								on:close={() => {
+									notifications = notifications.filter((n) => n.id !== notification.id);
+								}}
+							/>
+							<!-- width: 16; makes the notification the width of the panel -->
+							<!-- margin-top: 0; removes the margin on the topmost notification so the spacing is even -->
+						{/if}
 					{/each}
 				{:else}
 					<div style="text-align: center; margin-top: var(--cds-spacing-09)">
