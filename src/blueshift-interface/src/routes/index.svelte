@@ -23,6 +23,7 @@
 		setupGamepad
 	} from '$lib/gamepad_communication';
 
+	import { notificationManager } from '$lib/notification_manager';
 	import type { Notification } from '$lib/notification_manager';
 	import OverlayToastNotifications from '../components/OverlayToastNotifications.svelte';
 
@@ -31,22 +32,6 @@
 
 	let selectedCamera = 'Loading...';
 	let cameras = [];
-	let notifications: Notification[] = [
-		{
-			id: 0,
-			title: 'Notification 1',
-			subtitle: 'This is a notification',
-			level: 'info',
-			type: 'permanent'
-		},
-		{
-			id: 1,
-			title: 'Notification 2',
-			subtitle: 'This is a notification',
-			level: 'info',
-			type: 'toast'
-		}
-	];
 
 	let mode = 'one_cam';
 	$: cameraIcon = mode == 'one_cam' ? Grid20 : Checkbox20;
@@ -55,18 +40,28 @@
 	let gamepadState: Readable<GamepadState>;
 	onMount(() => {
 		registerGamepadConnectedListener((event: GamepadEvent) => {
-			console.log('Gamepad connected', event.gamepad.id);
-
 			gamepadState = setupGamepad(event.gamepad, 0.06);
+
+			notificationManager.addNotification({
+				title: 'Gamepad Connected',
+				subtitle: event.gamepad.id,
+				level: 'info',
+				type: 'toast'
+			});
 		});
 
 		registerGamepadDisconnectedListener((event: GamepadEvent) => {
-			console.log('Gamepad disconnected', event.gamepad.id);
+			notificationManager.addNotification({
+				title: 'Gamepad Disconnected',
+				subtitle: event.gamepad.id,
+				level: 'info',
+				type: 'toast'
+			});
 		});
 	});
 </script>
 
-<Header bind:notifications>
+<Header>
 	<HeaderNav slot="middle_section">
 		{#if mode == 'one_cam'}
 			<HeaderNavMenu text={selectedCamera}>
@@ -90,6 +85,9 @@
 
 {#if mode == 'one_cam'}
 	<Content style="padding: var(--cds-spacing-05);">
+		Notification List: {JSON.stringify($notificationManager)}
+		<br>
+		Gamepad State: {JSON.stringify($gamepadState)}
 		<!-- padding: var(--cds-spacing-05); decrease padding all around the camera display -->
 		<Grid style="max-width: 100%">
 			<Row>
@@ -117,4 +115,4 @@
 	</Content>
 {/if}
 
-<OverlayToastNotifications bind:notifications />
+<OverlayToastNotifications />

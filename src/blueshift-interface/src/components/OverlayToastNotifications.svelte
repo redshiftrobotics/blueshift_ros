@@ -1,10 +1,9 @@
 <script lang="ts">
 	import { InlineNotification } from 'carbon-components-svelte';
 
+	import { notificationManager } from '$lib/notification_manager';
 	import type { Notification } from '$lib/notification_manager';
-
-	export let notifications: Notification[];
-	export let displayTime = 5000;
+import { loop_guard } from 'svelte/internal';
 </script>
 
 <div class="box">
@@ -15,20 +14,16 @@
 			bottom: 20px;
 			width: 20rem;"
 	>
-		{#each notifications as notification}
-			<InlineNotification
-				lowContrast
-				hideCloseButton
-				title={notification.title}
-				kind={notification.level}
-				subtitle={notification.subtitle}
-				timeout={displayTime}
-				on:close={() => {
-					if (notification.type === 'toast') {
-						notifications = notifications.filter((n) => n.id !== notification.id);
-					}
-				}}
-			/>
+		{#each $notificationManager as notification}
+			{#if notification.type !== 'permanent-no-toast'}
+				<InlineNotification
+					lowContrast
+					hideCloseButton
+					title={notification.title}
+					kind={notification.level}
+					subtitle={notification.subtitle}
+				/>
+			{/if}
 		{/each}
 	</div>
 </div>

@@ -31,8 +31,7 @@
 
 	import ErrorWarningStatus from './ErrorWarningStatus.svelte';
 	import CustomHeaderAction from './CustomHeaderAction.svelte';
-
-	export let notifications = [];
+	import { notificationManager } from '$lib/notification_manager';
 
 	// Full screen handler (modified from: https://github.com/codechips/svelte-fullscreen-example)
 	let fs = false;
@@ -151,15 +150,15 @@
 				- all properties are passed down to the icons (this enables them to access `numErrors` and `numWarnings`)
 			 -->
 			<CustomHeaderAction
-				numErrors="1"
-				numWarnings="1"
+				numErrors={$notificationManager.filter((n) => n.level === 'error').length}
+				numWarnings={$notificationManager.filter((n) => n.level in ['warning', 'warning-alt']).length}
 				text="true"
 				icon={ErrorWarningStatus}
 				closeIcon={ErrorWarningStatus}
 			>
-				{#if notifications.length > 0}
-					{#each notifications as notification}
-						{#if notification.type === 'permanent'}
+				{#if $notificationManager.length > 0}
+					{#each $notificationManager as notification}
+						{#if notification.type !== 'toast'}
 							<ToastNotification
 								lowContrast
 								title={notification.title}
@@ -168,7 +167,7 @@
 								caption={notification.caption}
 								style="width: 16rem; margin-top: 0;"
 								on:close={() => {
-									notifications = notifications.filter((n) => n.id !== notification.id);
+									notificationManager.removeNotification(notification.id);
 								}}
 							/>
 							<!-- width: 16; makes the notification the width of the panel -->
