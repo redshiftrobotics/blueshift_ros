@@ -11,7 +11,8 @@ We use, [`pnpm`](https://github.com/pnpm/pnpm) instead of `npm`
 
 Install it with `npm install -g pnpm`
 
-Then replace npm in all future commands with `pnpm` (this should work for any commands you find online too)
+`pnpm` is a drop-in replacement for `npm` but it is faster, uses less storage, and is generally better.
+Any `npm` command should work the exact same if you just replace it with `pnpm`.
 
 ### Download all node packages
 `pnpm install` (`pnpm i` for short)

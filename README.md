@@ -9,7 +9,7 @@ Install ROS Galactic following these instructions:
 clone this repository
 
 ### Install Dependencies
-then run `rosdep install -i --from-path src --rosdistro galactic -y`
+`rosdep install -i --from-path src --rosdistro galactic -y` (Make sure this is run in the root folder of this repository)
 
 ### Build project
 To build the whole project run `colcon build`
