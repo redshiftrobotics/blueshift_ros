@@ -23,4 +23,4 @@ Then replace npm in all future commands with `pnpm` (this should work for any co
 To build it: `colcon build --symlink-install --packages-select blueshift_interface`
 To run it `ros2 launch blueshift_interface simple.launch` (this also starts the rosbridge_server to facilitate JS<->ROS communication)
 
-_Note: if there are any errors about missing packages, make download all dependencies as described [here](../../README.md)_
+_Note: if there are any errors about missing packages, make download all dependencies as described [here](../../README.md#install-dependencies)_
