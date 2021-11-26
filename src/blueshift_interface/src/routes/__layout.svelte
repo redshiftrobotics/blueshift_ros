@@ -16,6 +16,7 @@
 				caption: new Date().toLocaleString(),
 				type: 'permanent'
 			});
+			return true;
 		};
 
 		// testing only

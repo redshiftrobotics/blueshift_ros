@@ -10,7 +10,7 @@
 <div class="notification-container">
 	<div
 		style="
-			position: absolute;
+			position: fixed;
 			right: 20px;
 			bottom: 20px;
 			width: 20rem;
@@ -22,7 +22,6 @@
 					transition:fly={{ x: 300 }}
 				>
 					<InlineNotification
-						lowContrast
 						hideCloseButton
 						title={notification.title}
 						kind={notification.level}

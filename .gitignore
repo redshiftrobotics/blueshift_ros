@@ -56,3 +56,6 @@ CATKIN_IGNORE
 
 # macOS Files
 .DS_Store
+
+# Python Files
+__pycache__

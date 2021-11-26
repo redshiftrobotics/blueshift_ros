@@ -15,7 +15,7 @@
 
 	import Header from '$lib/components/Header.svelte';
 
-	import { robotIP } from '$lib/ts/ros_communication';
+	import { connectToROS, robotIP, websocketPort } from '$lib/ts/ros_communication';
 	import {
 		GamepadState,
 		registerGamepadConnectedListener,
@@ -32,23 +32,21 @@
 	import log from '$lib/ts/logger';
 
 	// testing only
-	setTimeout(() => {log.warn("test warning")}, 1000);
-	setTimeout(() => {log.error("test error")}, 1500);
+	// setTimeout(() => {
+	// 	log.warn('test warning');
+	// }, 1000);
+	// setTimeout(() => {
+	// 	log.error('test error');
+	// }, 1500);
 
 	let selectedCamera = 'Loading...';
 	let cameras = [];
 
 	// testing only
-	setTimeout(() => {
-		selectedCamera = 'Camera 1';
-		cameras = [
-			'Camera 1',
-			'Camera 2',
-			'Camera 3',
-			'Camera 4',
-			'Camera 5'
-	];
-	}, 1000);
+	// setTimeout(() => {
+	// 	selectedCamera = 'Camera 1';
+	// 	cameras = ['Camera 1', 'Camera 2', 'Camera 3', 'Camera 4', 'Camera 5'];
+	// }, 1000);
 
 	let mode = 'one_cam';
 	$: cameraIcon = mode == 'one_cam' ? Grid20 : Checkbox20;
@@ -60,7 +58,7 @@
 			gamepadState = setupGamepad(event.gamepad, 0.06);
 
 			notificationManager.addNotification({
-				title: 'Gamepad Connected',
+				title: 'JS: Gamepad Connected',
 				subtitle: event.gamepad.id,
 				level: 'info',
 				type: 'toast'
@@ -69,13 +67,42 @@
 
 		registerGamepadDisconnectedListener((event: GamepadEvent) => {
 			notificationManager.addNotification({
-				title: 'Gamepad Disconnected',
+				title: 'JS: Gamepad Disconnected',
 				subtitle: event.gamepad.id,
 				level: 'info',
 				type: 'toast'
 			});
 		});
 	});
+
+	var rosWS = connectToROS(
+		() => {
+			notificationManager.addNotification({
+				title: 'ROS: Connected to websocket server',
+				subtitle: `ws://${robotIP}:${websocketPort}`,
+				level: 'success',
+				type: 'toast'
+			});
+		},
+		(error) => {
+			notificationManager.addNotification({
+				title: 'ROS: error connecting to websocket server',
+				level: 'error',
+				subtitle: error.target.url,
+				caption: new Date().toLocaleString(),
+				type: 'permanent'
+			});
+			log.debug(error);
+		},
+		() => {
+			notificationManager.addNotification({
+				title: 'ROS: Connection to websocket server closed',
+				subtitle: `ws://${robotIP}:${websocketPort}`,
+				level: 'error',
+				type: 'toast'
+			});
+		}
+	);
 </script>
 
 <Header>
@@ -102,9 +129,6 @@
 
 {#if mode == 'one_cam'}
 	<Content style="padding: var(--cds-spacing-05);">
-		Notification List: {JSON.stringify($notificationManager)}
-		<br />
-		Gamepad State: {JSON.stringify($gamepadState)}
 		<!-- padding: var(--cds-spacing-05); decrease padding all around the camera display -->
 		<Grid style="max-width: 100%">
 			<Row>
