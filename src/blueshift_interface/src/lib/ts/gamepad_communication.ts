@@ -173,12 +173,3 @@ export function setupGamepad(
 		};
 	});
 }
-
-// until a joystick is connected, the main page needs to display a no joystick message
-// once a new joysticks shows up, display notification
-// then create a readable store with set timeout to get the new gamepad state
-// this probably needs a "just pressed" state for buttons so we can check if a button is being held down or was just pressed
-// then this store can be used in the settings page to display the current state of the joystick and in the index.svelte page where it will be sent to ROS
-// when a joystick is disconnected, a notification should be displayed
-// both connect/disconnect notifications should not stay in the panel, they should just appear and disappear
-// just going to ignore the multiple joystick case for now
