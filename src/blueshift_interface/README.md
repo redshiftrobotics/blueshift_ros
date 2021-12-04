@@ -42,6 +42,9 @@ To build it:
 ```
 colcon build --symlink-install --packages-select blueshift_interface
 ```
+_Note_: This first time it is built, this will take an extremely long time, because all the node packages need to be copied over to the install folder. Every subsequent time, it should only copy over the difference, so it should take less time. _TODO later: there may be a way to just re-download them into the install directory which might be quicker._
+
+
 To run it (this also starts the rosbridge_server to facilitate JS<->ROS communication)
 ```
 ros2 launch blueshift_interface simple.launch
