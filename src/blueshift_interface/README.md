@@ -11,6 +11,7 @@ Open a new terminal to get access to `nvm`
 nvm install 17
 ```
 
+### Install `pnpm`
 We use, [`pnpm`](https://github.com/pnpm/pnpm) instead of `npm`
 
 Install it with 
@@ -18,12 +19,14 @@ Install it with
 npm install -g pnpm
 ```
 
-`pnpm` is a drop-in replacement for `npm` but it is faster, uses less storage, and is generally better.
-Any `npm` command should work the exact same if you just replace it with `pnpm`.
+_`pnpm` is a drop-in replacement for `npm` but it is faster, uses less storage, and is generally better.
+Any `npm` command should work the exact same if you just replace it with `pnpm`._
 
 ### Download all node packages
-_Note_: All commands after this point need to be run in the `blueshift_interface` directory
-`pnpm install` (`pnpm i` for short)
+```
+pnpm install
+```
+_Note_: All of the following commands including this one need to be run in the `blueshift_interface` directory
 
 ### Run the website for development
 ```
