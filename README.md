@@ -7,10 +7,21 @@ Install ROS Galactic following these instructions:
 - https://docs.ros.org/en/galactic/Tutorials/Colcon-Tutorial.html
 
 ### Clone this repository
-`git clone https://github.com/redshiftrobotics/blueshift-ros.git`
+```
+git clone https://github.com/redshiftrobotics/blueshift-ros.git
+```
 
+### Install `rosdep`
+```
+sudo apt install -y python3-rosdep
+sudo rosdep init
+rosdep update
+```
 ### Install Dependencies
-`rosdep install -i --from-path src --rosdistro galactic -y` (Make sure this is run in the root folder of this repository)
+_Note_: All commands after this point must be run in the root folder of the repository
+```
+rosdep install -i --from-path src --rosdistro galactic -y
+```
 
 ### Build project
 To build the whole project run `colcon build`
