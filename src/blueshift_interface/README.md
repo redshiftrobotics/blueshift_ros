@@ -43,8 +43,9 @@ To build it:
 ```
 colcon build --packages-select blueshift_interface
 ```
-_Note_: This first time it is built, this might take a long time, because all the node packages need to be copied over to the install folder. Every subsequent time, it should only copy over the difference, so it should be faster. _TODO later: there may be a way to just re-download them into the install directory which might be quicker._
+_Note 1_: This first time it is built, this might take a long time, because all the node packages need to be copied over to the install folder. Every subsequent time, it should only copy over the difference, so it should be faster. _TODO later: there may be a way to just re-download them into the install directory which might be quicker._
 
+_Note 2_: Building this with the `--symlink-install` flag seems to raise cause an issue with symlinks, so this package (and probably the whole workspace) should be built _without_ that flag.
 
 To run it (this also starts the rosbridge_server to facilitate JS<->ROS communication)
 ```
