@@ -12,15 +12,16 @@ nvm install 17
 ```
 
 ### Install `pnpm`
-We use, [`pnpm`](https://github.com/pnpm/pnpm) instead of `npm`
+We use, [`pnpm`](https://github.com/pnpm/pnpm) instead of [`npm`](https://www.npmjs.com/about). Read why [here](https://betterprogramming.pub/the-case-for-pnpm-over-npm-or-yarn-2b221607119)
+
+_In general, `pnpm` is a drop-in replacement for `npm` but it is faster, uses less storage, and is generally better.
+Any `npm` command should work the exact same if you just replace it with `pnpm`._
 
 Install it with 
 ```
 npm install -g pnpm
 ```
 
-_`pnpm` is a drop-in replacement for `npm` but it is faster, uses less storage, and is generally better.
-Any `npm` command should work the exact same if you just replace it with `pnpm`._
 
 ### Download all node packages
 ```
