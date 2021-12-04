@@ -26,7 +26,7 @@ Any `npm` command should work the exact same if you just replace it with `pnpm`.
 ```
 pnpm install
 ```
-_Note_: All of the following commands including this one need to be run in the `blueshift_interface` directory
+_Note_: All of the following commands including this one need to be run in the `src/blueshift_interface` directory
 
 ### Run the website for development
 ```
