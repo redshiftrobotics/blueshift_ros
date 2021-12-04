@@ -6,7 +6,8 @@ Install ROS Galactic following these instructions:
 - https://docs.ros.org/en/galactic/Tutorials/Configuring-ROS2-Environment.html
 - https://docs.ros.org/en/galactic/Tutorials/Colcon-Tutorial.html
 
-clone this repository
+### Clone this repository
+`git clone https://github.com/redshiftrobotics/blueshift-ros.git`
 
 ### Install Dependencies
 `rosdep install -i --from-path src --rosdistro galactic -y` (Make sure this is run in the root folder of this repository)
