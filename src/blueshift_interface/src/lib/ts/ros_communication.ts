@@ -13,6 +13,17 @@ declare global {
 }
 
 /**
+ * Gets the current state of connectivity with ROS
+ * @returns Whether or not a websocket connection is currently established with ros
+ */
+export function getROSConnected(): Boolean {
+    return ROSConnected;
+}
+let ROSConnected: Boolean = false;
+
+export let ROSLIB: any;
+
+/**
  * Sets up communication with ROS (the robot's ip and default port of 9090 are used for the websocket communication)
  * @param onconnection callback on connection to ros websocket server
  * @param onerror callback if connection with ros websocket server faile
@@ -26,21 +37,31 @@ export async function connectToROS(onconnection = (): void => { }, onerror = (er
 
         // typescript doesn't know this variable exists, tricks it into thinking it does
         window.ROSLIB = window.ROSLIB || {};
-        var ros = new window.ROSLIB.Ros({
+
+        // This exports the ROSLIB variable so it can be used in other files
+        ROSLIB = window.ROSLIB;
+
+        // Setup the connection with ROS
+        const ros = new window.ROSLIB.Ros({
             url: `ws://${robotIP}:${websocketPort}`
         });
 
+        // Register Event handlers
         ros.on('connection', function () {
+            ROSConnected = true;
             onconnection();
         });
 
         ros.on('error', function (error) {
+            ROSConnected = false;
             onerror(error);
         });
 
         ros.on('close', function () {
+            ROSConnected = false;
             onclose();
         });
+        
         return ros
     }
 }

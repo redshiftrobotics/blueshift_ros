@@ -69,4 +69,4 @@ function createNotificationManager(toastDisplayTime = 2500) {
 	};
 }
 
-export const notificationManager = createNotificationManager();
+export const notificationManager = createNotificationManager(3500);

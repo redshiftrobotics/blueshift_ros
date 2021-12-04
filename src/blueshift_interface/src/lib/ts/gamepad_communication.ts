@@ -80,7 +80,15 @@ export function registerGamepadDisconnectedListener(callback: (event: GamepadEve
 
 // TODO: update this to work with multiple gamepads (wkeep track of them by their id, etc.)
 let lastGamepadState: GamepadState = new GamepadState();
-let gamepadConnected = false;
+
+/**
+* Gets the current state of connectivity with a gamepad
+* @returns Whether or not a gamepad is connected
+*/
+export function getGamepadConnected(): Boolean {
+   return gamepadConnected;
+}
+let gamepadConnected: Boolean = false;
 
 /**
  * returns 0 for any number within the threshold, and the number otherwise

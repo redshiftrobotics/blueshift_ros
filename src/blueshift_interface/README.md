@@ -15,6 +15,7 @@ Install it with `npm install -g pnpm`
 Any `npm` command should work the exact same if you just replace it with `pnpm`.
 
 ### Download all node packages
+_Note_: All commands after this point need to be run in the `blueshift_interface` directory
 `pnpm install` (`pnpm i` for short)
 
 ### Run the website for development
