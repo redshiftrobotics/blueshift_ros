@@ -55,7 +55,7 @@
 	// 	cameras = ['Camera 1', 'Camera 2', 'Camera 3', 'Camera 4', 'Camera 5'];
 	// }, 1000);
 
-	let mode = 'one_cam';
+	let mode: 'one_cam' | 'multi_cam' = 'one_cam';
 	$: cameraIcon = mode == 'one_cam' ? Grid20 : Checkbox20;
 
 	let gamepadState: Readable<GamepadState>;
@@ -156,6 +156,15 @@
 					<HeaderNavItem text={camera} href="#" />
 				{/each}
 			</HeaderNavMenu>
+		{:else}
+			<HeaderNavItem text="You're Doing Great" on:click={() => {
+				notificationManager.addNotification({
+					title: 'Yay!!',
+					subtitle: "You're doing a great job",
+					level: 'success',
+					type: 'toast'
+				})
+			}}/>
 		{/if}
 		<HeaderGlobalAction
 			icon={cameraIcon}
