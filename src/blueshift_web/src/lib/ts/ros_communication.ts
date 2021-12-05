@@ -170,7 +170,7 @@ export function topic<T extends messageTypes>(topicName: string, type: T, commun
 
     const topicStore = writable(sampleMessage);
 
-    if (communicationDirection = "publish") {
+    if (communicationDirection == "publish") {
         topicStore.subscribe((msg: typeof sampleMessage) => {
             rosTopic.publish(new window.ROSLIB.Message(msg));
         });

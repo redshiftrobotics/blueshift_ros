@@ -65,7 +65,7 @@
 	let robotMovementTopic: Writable<geometry_msgs_Twist>;
 	onMount(async () => {
 		registerGamepadConnectedListener((event: GamepadEvent) => {
-			gamepadState = setupGamepad(event.gamepad, 0.06);
+			gamepadState = setupGamepad(event.gamepad, 0.06, 30);
 
 			notificationManager.addNotification({
 				title: 'JS: Gamepad Connected',
