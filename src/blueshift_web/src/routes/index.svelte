@@ -19,8 +19,11 @@
 		connectToROS,
 		robotIP,
 		websocketPort,
-		ROSLIB,
-		ROSConnected
+		ROSConnected,
+		topic,
+		geometry_msgs_Linear,
+		geometry_msgs_Angular,
+		geometry_msgs_Twist
 	} from '$lib/ts/ros_communication';
 	import {
 		GamepadState,
@@ -33,7 +36,7 @@
 	import { notificationManager } from '$lib/ts/notification_manager';
 	import type { Notification } from '$lib/ts/notification_manager';
 
-	import type { Readable } from 'svelte/store';
+	import type { Readable, Writable } from 'svelte/store';
 	import { onMount } from 'svelte';
 
 	import log from '$lib/ts/logger';
@@ -59,7 +62,7 @@
 	$: cameraIcon = mode == 'one_cam' ? Grid20 : Checkbox20;
 
 	let gamepadState: Readable<GamepadState>;
-	let robotMovementTopic;
+	let robotMovementTopic: Writable<geometry_msgs_Twist>;
 	onMount(async () => {
 		registerGamepadConnectedListener((event: GamepadEvent) => {
 			gamepadState = setupGamepad(event.gamepad, 0.06);
@@ -122,30 +125,27 @@
 		 *
 		 * We could also create a custom promise that either throws an error or resolves to a working websocket connection
 		 */
-		robotMovementTopic = new ROSLIB.Topic({
-			ros: rosWS,
-			name: '/topic',
-			messageType: 'geometry_msgs/Twist'
-		});
+		robotMovementTopic = topic('/topic', 'geometry_msgs/Twist', 'publish');
 	});
 
 	$: {
 		if ($gamepadConnected && $ROSConnected) {
-			let twist = new ROSLIB.Message({
-				linear: {
-					x: $gamepadState.left.stick.x,
-					y: $gamepadState.left.stick.y,
-					z: Number($gamepadState.left.bumper.pressed) - Number($gamepadState.right.bumper.pressed)
-				},
-				angular: {
-					x: $gamepadState.right.stick.x,
-					y: $gamepadState.right.stick.y,
-					z: $gamepadState.left.trigger - $gamepadState.right.trigger
-				}
-			});
-			robotMovementTopic.publish(twist);
+			// let twist = new ROSLIB.Message({
+			// 	linear: {
+			// 		x: $gamepadState.left.stick.x,
+			// 		y: $gamepadState.left.stick.y,
+			// 		z: Number($gamepadState.left.bumper.pressed) - Number($gamepadState.right.bumper.pressed)
+			// 	},
+			// 	angular: {
+			// 		x: $gamepadState.right.stick.x,
+			// 		y: $gamepadState.right.stick.y,
+			// 		z: $gamepadState.left.trigger - $gamepadState.right.trigger
+			// 	}
+			// });
+			// robotMovementTopic.publish(twist);
+			$robotMovementTopic = new geometry_msgs_Twist(new geometry_msgs_Linear($gamepadState.left.stick.x), new geometry_msgs_Angular());
 		}
-	};
+	}
 </script>
 
 <Header>
@@ -189,7 +189,7 @@
 			<Row>
 				<Column aspectRatio="16x9" style="outline: 1px solid var(--cds-interactive-04)">
 					16x9
-					{$ROSConnected && $gamepadConnected} <br>
+					{$ROSConnected && $gamepadConnected} <br />
 					{JSON.stringify($gamepadState)}
 				</Column>
 			</Row>
