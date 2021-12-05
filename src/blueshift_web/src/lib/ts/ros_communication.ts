@@ -1,6 +1,14 @@
 import { browser } from '$app/env';
 import { readable, writable } from 'svelte/store';
-import type { Readable, Writable } from 'svelte/store';
+import type { Readable } from 'svelte/store';
+
+import type {
+    ROSMessageStrings,
+    publishSubscribe,
+    ROSMessage,
+    ReadableWriteableStore
+} from '$lib/ts/utils/ros2_msg_definitions';
+import { ROSMessageFactories } from '$lib/ts/utils/ros2_msg_definitions';
 
 // Only get the robot ip (which is equivalent to the website hostname) if this is running on the client (not if its being pre-rendered on the server)
 export let robotIP: string;
@@ -77,89 +85,26 @@ export async function connectToROS(onconnection = (): void => { }, onerror = (er
     }
 }
 
-interface ROSMessageBase {
-}
-
-export interface geometry_msgs_Linear extends ROSMessageBase {
-    x: number;
-    y: number;
-    z: number;
-}
-
-function geometry_msgs_Linear_Factory(): geometry_msgs_Linear {
-    return {
-        x: 0,
-        y: 0,
-        z: 0
-    };
-}
-
-export interface geometry_msgs_Angular extends ROSMessageBase {
-    x: number;
-    y: number;
-    z: number;
-}
-
-function geometry_msgs_Angular_Factory(): geometry_msgs_Angular {
-    return {
-        x: 0,
-        y: 0,
-        z: 0
-    };
-}
-
-export interface geometry_msgs_Twist extends ROSMessageBase {
-    linear: geometry_msgs_Linear;
-    angular: geometry_msgs_Angular;
-}
-
-function geometry_msgs_Twist_Factory(): geometry_msgs_Twist {
-    return {
-        linear: geometry_msgs_Linear_Factory(),
-        angular: geometry_msgs_Angular_Factory()
-    };
-}
-
-type messageTypes = "geometry_msgs/Linear" | "geometry_msgs/Angular" | "geometry_msgs/Twist";
-
-type ROSMessagesTypes = {
-    "geometry_msgs/Linear": geometry_msgs_Linear,
-    "geometry_msgs/Angular": geometry_msgs_Angular,
-    "geometry_msgs/Twist": geometry_msgs_Twist
-}
-
-// https://fettblog.eu/typescript-type-maps/
-// https://blog.rsuter.com/how-to-instantiate-a-generic-type-in-typescript/
-type ROSMessage<T extends messageTypes> =
-    T extends keyof ROSMessagesTypes ? ROSMessagesTypes[T] :
-    ROSMessageBase;
-
-let AllROSMessages = {
-    "geometry_msgs/Linear": geometry_msgs_Linear_Factory,
-    "geometry_msgs/Angular": geometry_msgs_Angular_Factory,
-    "geometry_msgs/Twist": geometry_msgs_Twist_Factory
-}
-
-export function topic<T extends messageTypes>(topicName: string, type: T, communicationDirection: "publish" | "subscribe"): Writable<ROSMessage<T>> {
+export function topic<T extends ROSMessageStrings, direction extends publishSubscribe>(topicName: string, type: T, communicationDirection: direction): ReadableWriteableStore<ROSMessage<T>, direction> {
     const rosTopic = new window.ROSLIB.Topic({
         ros: ros,
         name: topicName,
         messageType: type
     });
 
-    const sampleMessage: ROSMessage<T> = AllROSMessages[type]();
-
-    const topicStore = writable(sampleMessage);
-
     if (communicationDirection == "publish") {
-        topicStore.subscribe((msg: ROSMessage<T>) => {
+        const writeableTopicStore = writable(ROSMessageFactories[type]() as ROSMessage<T>);
+        writeableTopicStore.subscribe((msg: ROSMessage<T>) => {
             rosTopic.publish(new window.ROSLIB.Message(msg));
         });
+        return writeableTopicStore;
     } else {
-        rosTopic.subscribe((msg) => {
-            topicStore.set(msg);
+        const readableTopicStore = readable(ROSMessageFactories[type]() as ROSMessage<T>, function start(set) {
+            rosTopic.subscribe((msg) => {
+                set(msg);
+            });
         });
+        // for some reason the compiler thinks that the type here will be wrong, so we have to set it manually with as
+        return readableTopicStore as ReadableWriteableStore<ROSMessage<T>, direction>;
     }
-
-    return topicStore;
 }

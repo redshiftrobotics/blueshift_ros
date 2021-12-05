@@ -21,10 +21,9 @@
 		websocketPort,
 		ROSConnected,
 		topic,
-		geometry_msgs_Linear,
-		geometry_msgs_Angular,
-		geometry_msgs_Twist
 	} from '$lib/ts/ros_communication';
+	import type { geometry_msgs_Twist } from '$lib/ts/utils/ros2_msg_definitions';
+
 	import {
 		GamepadState,
 		registerGamepadConnectedListener,
