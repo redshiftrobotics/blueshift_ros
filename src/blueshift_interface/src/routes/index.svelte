@@ -19,15 +19,15 @@
 		connectToROS,
 		robotIP,
 		websocketPort,
-		getROSConnected,
-		ROSLIB
+		ROSLIB,
+		ROSConnected
 	} from '$lib/ts/ros_communication';
 	import {
 		GamepadState,
 		registerGamepadConnectedListener,
 		registerGamepadDisconnectedListener,
 		setupGamepad,
-		getGamepadConnected
+		gamepadConnected
 	} from '$lib/ts/gamepad_communication';
 
 	import { notificationManager } from '$lib/ts/notification_manager';
@@ -83,7 +83,7 @@
 
 		// Svelte and/or SvelteKit don't support top level await (https://github.com/sveltejs/svelte/issues/5501, https://github.com/sveltejs/kit/issues/941)
 		// Because loading ROSLIB is async, everything that uses it has to also be async
-		let rosWS = await connectToROS(
+		const rosWS = await connectToROS(
 			() => {
 				notificationManager.addNotification({
 					title: 'ROS: Connected to websocket server',
@@ -127,25 +127,25 @@
 			name: '/topic',
 			messageType: 'geometry_msgs/Twist'
 		});
-
-		gamepadState.subscribe((gamepad: GamepadState) => {
-			if (getROSConnected() && getGamepadConnected()) {
-				let twist = new ROSLIB.Message({
-					linear: {
-						x: gamepad.left.stick.x,
-						y: gamepad.left.stick.y,
-						z: Number(gamepad.left.bumper.pressed) - Number(gamepad.right.bumper.pressed)
-					},
-					angular: {
-						x: gamepad.right.stick.x,
-						y: gamepad.right.stick.y,
-						z: gamepad.left.trigger - gamepad.right.trigger
-					}
-				});
-				robotMovementTopic.publish(twist);
-			}
-		});
 	});
+
+	$: {
+		if ($gamepadConnected && $ROSConnected) {
+			let twist = new ROSLIB.Message({
+				linear: {
+					x: $gamepadState.left.stick.x,
+					y: $gamepadState.left.stick.y,
+					z: Number($gamepadState.left.bumper.pressed) - Number($gamepadState.right.bumper.pressed)
+				},
+				angular: {
+					x: $gamepadState.right.stick.x,
+					y: $gamepadState.right.stick.y,
+					z: $gamepadState.left.trigger - $gamepadState.right.trigger
+				}
+			});
+			robotMovementTopic.publish(twist);
+		}
+	};
 </script>
 
 <Header>
@@ -157,14 +157,17 @@
 				{/each}
 			</HeaderNavMenu>
 		{:else}
-			<HeaderNavItem text="You're Doing Great" on:click={() => {
-				notificationManager.addNotification({
-					title: 'Yay!!',
-					subtitle: "You're doing a great job",
-					level: 'success',
-					type: 'toast'
-				})
-			}}/>
+			<HeaderNavItem
+				text="You're Doing Great"
+				on:click={() => {
+					notificationManager.addNotification({
+						title: 'Yay!!',
+						subtitle: "You're doing a great job",
+						level: 'success',
+						type: 'toast'
+					});
+				}}
+			/>
 		{/if}
 		<HeaderGlobalAction
 			icon={cameraIcon}
@@ -186,6 +189,8 @@
 			<Row>
 				<Column aspectRatio="16x9" style="outline: 1px solid var(--cds-interactive-04)">
 					16x9
+					{$ROSConnected && $gamepadConnected} <br>
+					{JSON.stringify($gamepadState)}
 				</Column>
 			</Row>
 		</Grid>

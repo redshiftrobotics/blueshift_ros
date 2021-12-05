@@ -38,15 +38,14 @@ add_custom_command(
 
 add_custom_target(
   web_interface ALL
-  DEPENDS ${CMAKE_SOURCE_DIR}/build/index.js
+  DEPENDS ${CMAKE_SOURCE_DIR}/build/build.stamp
 )
 
+# This is a simpler version of the add_custom_command and add_custom_target above
 # add_custom_target (npm-target ALL
-#   COMMAND cd ${CMAKE_SOURCE_DIR} && npm run build
+#   COMMAND cd ${CMAKE_SOURCE_DIR} && pnpm i && pnpm run build
 # )
 
-
-# install rules added by ros2pkg_configure_nodejs
 install(FILES 
  package.json
  DESTINATION share/${PROJECT_NAME}/

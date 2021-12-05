@@ -1,4 +1,6 @@
 import { browser } from '$app/env';
+import { readable } from 'svelte/store';
+import type { Readable } from 'svelte/store';
 
 // Only get the robot ip (which is equivalent to the website hostname) if this is running on the client (not if its being pre-rendered on the server)
 export let robotIP: string;
@@ -13,13 +15,20 @@ declare global {
 }
 
 /**
- * Gets the current state of connectivity with ROS
- * @returns Whether or not a websocket connection is currently established with ros
+ * This private function is used to set the state of the `ROSConnected` store
+ * @param state _true_: connected, _false_: not connected
  */
-export function getROSConnected(): Boolean {
-    return ROSConnected;
-}
-let ROSConnected: Boolean = false;
+let setROSConnected = (state: Boolean) => null;
+
+/**
+ * This svelte readable store keeps track of whether we are connected to ROS or not. It is updated automatically
+ */
+export const ROSConnected: Readable<Boolean> = readable(false, function start(set) {
+	setROSConnected = set;
+
+	return function stop() {};
+});
+
 
 export let ROSLIB: any;
 
@@ -48,17 +57,17 @@ export async function connectToROS(onconnection = (): void => { }, onerror = (er
 
         // Register Event handlers
         ros.on('connection', function () {
-            ROSConnected = true;
+            setROSConnected(true)
             onconnection();
         });
 
         ros.on('error', function (error) {
-            ROSConnected = false;
+            setROSConnected(false)
             onerror(error);
         });
 
         ros.on('close', function () {
-            ROSConnected = false;
+            setROSConnected(false)
             onclose();
         });
         

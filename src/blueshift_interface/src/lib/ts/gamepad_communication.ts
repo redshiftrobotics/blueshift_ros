@@ -56,7 +56,7 @@ export function registerGamepadConnectedListener(callback: (event: GamepadEvent)
 	}
 	window.addEventListener('gamepadconnected', (event: GamepadEvent) => {
 		callback(event);
-		gamepadConnected = true;
+		setGamepadConnected(true);
 	});
 }
 
@@ -73,7 +73,7 @@ export function registerGamepadDisconnectedListener(callback: (event: GamepadEve
 		throw new Error('window is undefined. This must be called within onMount()');
 	}
 	window.addEventListener('gamepaddisconnected', (event: GamepadEvent) => {
-		gamepadConnected = false;
+		setGamepadConnected(false);
 		callback(event);
 	});
 }
@@ -82,13 +82,19 @@ export function registerGamepadDisconnectedListener(callback: (event: GamepadEve
 let lastGamepadState: GamepadState = new GamepadState();
 
 /**
-* Gets the current state of connectivity with a gamepad
-* @returns Whether or not a gamepad is connected
-*/
-export function getGamepadConnected(): Boolean {
-   return gamepadConnected;
-}
-let gamepadConnected: Boolean = false;
+ * This private function is used to set the state of the `gamepadConnected` store
+ * @param state _true_: connected, _false_: not connected
+ */
+ let setGamepadConnected = (state: Boolean) => null;
+
+ /**
+  * This svelte readable store keeps track of whether we are connected to a gamepad or not. It is updated automatically
+  */
+ export const gamepadConnected: Readable<Boolean> = readable(false, function start(set) {
+	setGamepadConnected = set;
+ 
+	 return function stop() {};
+ });
 
 /**
  * returns 0 for any number within the threshold, and the number otherwise
