@@ -16,7 +16,7 @@ def generate_launch_description():
 
     ld = LaunchDescription()
 
-    web_interface_share_directory = get_package_share_directory('blueshift_interface')
+    web_interface_share_directory = get_package_share_directory('blueshift_web')
     
     # Web Interface Launcher
     start_interface_file = os.path.join(
@@ -25,7 +25,7 @@ def generate_launch_description():
         'index.js')
 
     start_web_interface = Node(
-        name='blueshift_interface',
+        name='blueshift_web',
         executable='node',
         output='screen',
         parameters=[{'use_sim_time': use_sim_time}],

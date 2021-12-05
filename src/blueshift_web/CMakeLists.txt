@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.8)
-project(blueshift_interface)
+project(blueshift_web)
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
@@ -30,7 +30,7 @@ add_custom_command(
   COMMAND
     echo "Installing all build dependencies" && cd ${CMAKE_SOURCE_DIR} && pnpm i # Install all dependencies
   COMMAND
-    echo "Building the interface" && cd ${CMAKE_SOURCE_DIR} && pnpm run build # Build the site
+    echo "Building the web interface" && cd ${CMAKE_SOURCE_DIR} && pnpm run build # Build the site
   COMMENT
     "Building web interface with SvelteKit"
   VERBATIM
