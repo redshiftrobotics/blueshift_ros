@@ -114,36 +114,24 @@
 				});
 			}
 		);
-
-		/**
-		 * TODO: Find a better way to work with ROSLIB
-		 *
-		 * Maybe create a custom set of functions for talking to topics, services, params, and actions?
-		 *   This will probably be necessary if we want an automated way to turn topics that we listen to into stores (we might even be able to write to them that way too)
-		 *
-		 * Ideally we would also want typescript definitions for everything (both Topic and Message functions, as well as a way to generate definitions for every message/server type we use)
-		 *
-		 * We could also create a custom promise that either throws an error or resolves to a working websocket connection
-		 */
+		
 		robotMovementTopic = topic('/topic', 'geometry_msgs/Twist', 'publish');
 	});
 
 	$: {
 		if ($gamepadConnected && $ROSConnected) {
-			// let twist = new ROSLIB.Message({
-			// 	linear: {
-			// 		x: $gamepadState.left.stick.x,
-			// 		y: $gamepadState.left.stick.y,
-			// 		z: Number($gamepadState.left.bumper.pressed) - Number($gamepadState.right.bumper.pressed)
-			// 	},
-			// 	angular: {
-			// 		x: $gamepadState.right.stick.x,
-			// 		y: $gamepadState.right.stick.y,
-			// 		z: $gamepadState.left.trigger - $gamepadState.right.trigger
-			// 	}
-			// });
-			// robotMovementTopic.publish(twist);
-			$robotMovementTopic = new geometry_msgs_Twist(new geometry_msgs_Linear($gamepadState.left.stick.x), new geometry_msgs_Angular());
+			$robotMovementTopic = {
+				linear: {
+					x: $gamepadState.left.stick.x,
+					y: $gamepadState.left.stick.y,
+					z: Number($gamepadState.left.bumper.pressed) - Number($gamepadState.right.bumper.pressed)
+				},
+				angular: {
+					x: $gamepadState.right.stick.x,
+					y: $gamepadState.right.stick.y,
+					z: $gamepadState.left.trigger - $gamepadState.right.trigger
+				}
+			};
 		}
 	}
 </script>

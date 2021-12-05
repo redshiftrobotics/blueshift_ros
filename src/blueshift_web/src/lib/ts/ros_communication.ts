@@ -77,86 +77,67 @@ export async function connectToROS(onconnection = (): void => { }, onerror = (er
     }
 }
 
-class ROSMessageBase {
+interface ROSMessageBase {
 }
 
-export class geometry_msgs_Linear extends ROSMessageBase {
+export interface geometry_msgs_Linear extends ROSMessageBase {
     x: number;
     y: number;
     z: number;
-
-    constructor(x = 0, y = 0, z = 0) {
-        super();
-        this.x = x;
-        this.y = y;
-        this.z = z;
-    }
 }
 
-export class geometry_msgs_Angular extends ROSMessageBase {
+function geometry_msgs_Linear_Factory(): geometry_msgs_Linear {
+    return {
+        x: 0,
+        y: 0,
+        z: 0
+    };
+}
+
+export interface geometry_msgs_Angular extends ROSMessageBase {
     x: number;
     y: number;
     z: number;
-
-    constructor(x = 0, y = 0, z = 0) {
-        super();
-        this.x = x;
-        this.y = y;
-        this.z = z;
-    }
 }
 
-export class geometry_msgs_Twist extends ROSMessageBase {
+function geometry_msgs_Angular_Factory(): geometry_msgs_Angular {
+    return {
+        x: 0,
+        y: 0,
+        z: 0
+    };
+}
+
+export interface geometry_msgs_Twist extends ROSMessageBase {
     linear: geometry_msgs_Linear;
     angular: geometry_msgs_Angular;
+}
 
-    constructor(linear = new geometry_msgs_Linear(), angular = new geometry_msgs_Angular()) {
-        super();
-        this.linear = linear;
-        this.angular = angular;
-    }
+function geometry_msgs_Twist_Factory(): geometry_msgs_Twist {
+    return {
+        linear: geometry_msgs_Linear_Factory(),
+        angular: geometry_msgs_Angular_Factory()
+    };
 }
 
 type messageTypes = "geometry_msgs/Linear" | "geometry_msgs/Angular" | "geometry_msgs/Twist";
 
-type AllROSMessagesTypes = {
+type ROSMessagesTypes = {
     "geometry_msgs/Linear": geometry_msgs_Linear,
     "geometry_msgs/Angular": geometry_msgs_Angular,
     "geometry_msgs/Twist": geometry_msgs_Twist
 }
 
+// https://fettblog.eu/typescript-type-maps/
+// https://blog.rsuter.com/how-to-instantiate-a-generic-type-in-typescript/
 type ROSMessage<T extends messageTypes> =
-    T extends keyof AllROSMessagesTypes ? AllROSMessagesTypes[T] :
+    T extends keyof ROSMessagesTypes ? ROSMessagesTypes[T] :
     ROSMessageBase;
 
-// class Factory {
-//     create<T>(type: (new () => T)): T {
-//         return new type();
-//     }
-// }
-// let factory = new Factory();
-
-let AllROSMessages: {[name: string] : ROSMessageBase} = {
-    "geometry_msgs/Linear": new geometry_msgs_Linear(),
-    "geometry_msgs/Angular": new geometry_msgs_Angular(),
-    "geometry_msgs/Twist": new geometry_msgs_Twist()
-}
-
-// Copied from: https://gist.github.com/sunnyy02/2477458d4d1c08bde8cc06cd8f56702e#file-deepclone-ts
-class cloneable {
-  public static deepCopy<T>(source: T): T {
-    return Array.isArray(source)
-    ? source.map(item => this.deepCopy(item))
-    : source instanceof Date
-    ? new Date(source.getTime())
-    : source && typeof source === 'object'
-          ? Object.getOwnPropertyNames(source).reduce((o, prop) => {
-             Object.defineProperty(o, prop, Object.getOwnPropertyDescriptor(source, prop)!);
-             o[prop] = this.deepCopy((source as { [key: string]: any })[prop]);
-             return o;
-          }, Object.create(Object.getPrototypeOf(source)))
-    : source as T;
-  }
+let AllROSMessages = {
+    "geometry_msgs/Linear": geometry_msgs_Linear_Factory,
+    "geometry_msgs/Angular": geometry_msgs_Angular_Factory,
+    "geometry_msgs/Twist": geometry_msgs_Twist_Factory
 }
 
 export function topic<T extends messageTypes>(topicName: string, type: T, communicationDirection: "publish" | "subscribe"): Writable<ROSMessage<T>> {
@@ -166,12 +147,12 @@ export function topic<T extends messageTypes>(topicName: string, type: T, commun
         messageType: type
     });
 
-    const sampleMessage = cloneable.deepCopy(AllROSMessages[type]);
+    const sampleMessage: ROSMessage<T> = AllROSMessages[type]();
 
     const topicStore = writable(sampleMessage);
 
     if (communicationDirection == "publish") {
-        topicStore.subscribe((msg: typeof sampleMessage) => {
+        topicStore.subscribe((msg: ROSMessage<T>) => {
             rosTopic.publish(new window.ROSLIB.Message(msg));
         });
     } else {
@@ -182,31 +163,3 @@ export function topic<T extends messageTypes>(topicName: string, type: T, commun
 
     return topicStore;
 }
-
-/*
-
-        robotMovementTopic = new ROSLIB.Topic({
-            ros: rosWS,
-            name: '/topic',
-            messageType: 'geometry_msgs/Twist'
-        });
-    });
-
-    $: {
-        if ($gamepadConnected && $ROSConnected) {
-            let twist = new ROSLIB.Message({
-                linear: {
-                    x: $gamepadState.left.stick.x,
-                    y: $gamepadState.left.stick.y,
-                    z: Number($gamepadState.left.bumper.pressed) - Number($gamepadState.right.bumper.pressed)
-                },
-                angular: {
-                    x: $gamepadState.right.stick.x,
-                    y: $gamepadState.right.stick.y,
-                    z: $gamepadState.left.trigger - $gamepadState.right.trigger
-                }
-            });
-            robotMovementTopic.publish(twist);
-        }
-    };
-*/
