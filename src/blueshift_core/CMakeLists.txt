@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
-project(robot_core)
+project(blueshift_core)
 
 
 if(NOT CMAKE_CXX_STANDARD)
@@ -12,21 +12,20 @@ endif()
 
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
-find_package(geometry_msgs REQUIRED)
+find_package(blueshift_interfaces REQUIRED)   
+find_package(std_msgs REQUIRED)  
 
-add_executable(talker src/publisher_member_function.cpp)
-ament_target_dependencies(talker rclcpp geometry_msgs)
+
+
+add_executable(listener src/subscriber_member_function.cpp)
+ament_target_dependencies(listener rclcpp blueshift_interfaces) 
 
 install(TARGETS
-  talker
+  listener
   DESTINATION lib/${PROJECT_NAME})
+
 
 ament_package()
 
-add_executable(listener src/subscriber_member_function.cpp)
-ament_target_dependencies(listener rclcpp geometry_msgs)
 
-install(TARGETS
-  talker
-  listener
-  DESTINATION lib/${PROJECT_NAME})
+
