@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.8)
-project(blueshift_interface)
+project(blueshift_web)
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
@@ -23,11 +23,14 @@ endif()
 # build the node.js code before copying into install
 add_custom_command(
   OUTPUT
-    ${CMAKE_SOURCE_DIR}/build/index.js
+    # This file doesn't exist, and it never should
+    # We're tricking cmake into thinking that running the following commands will create this file
+    # So if the file existed it wouldn't run the commands to build the website
+    ${CMAKE_SOURCE_DIR}/build/build.stamp
   COMMAND
     echo "Installing all build dependencies" && cd ${CMAKE_SOURCE_DIR} && pnpm i # Install all dependencies
   COMMAND
-    echo "Building the interface" && cd ${CMAKE_SOURCE_DIR} && pnpm run build # Build the site
+    echo "Building the web interface" && cd ${CMAKE_SOURCE_DIR} && pnpm run build # Build the site
   COMMENT
     "Building web interface with SvelteKit"
   VERBATIM
@@ -35,15 +38,14 @@ add_custom_command(
 
 add_custom_target(
   web_interface ALL
-  DEPENDS ${CMAKE_SOURCE_DIR}/build/index.js
+  DEPENDS ${CMAKE_SOURCE_DIR}/build/build.stamp
 )
 
+# This is a simpler version of the add_custom_command and add_custom_target above
 # add_custom_target (npm-target ALL
-#   COMMAND cd ${CMAKE_SOURCE_DIR} && npm run build
+#   COMMAND cd ${CMAKE_SOURCE_DIR} && pnpm i && pnpm run build
 # )
 
-
-# install rules added by ros2pkg_configure_nodejs
 install(FILES 
  package.json
  DESTINATION share/${PROJECT_NAME}/

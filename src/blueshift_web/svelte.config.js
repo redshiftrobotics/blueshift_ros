@@ -24,7 +24,10 @@ const config = {
 		vite: {
 			plugins: [
 				//   process.env.NODE_ENV === "production" && optimizeCss()
-			]
+			],
+			build: {
+				target: [ 'es2020' ] // required to use generated typescript interfaces for ros2 message definitions
+			}
 		}
 	}
 };

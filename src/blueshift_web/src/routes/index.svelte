@@ -15,18 +15,28 @@
 
 	import Header from '$lib/components/Header.svelte';
 
-	import { connectToROS, robotIP, websocketPort } from '$lib/ts/ros_communication';
+	import {
+		connectToROS,
+		robotIP,
+		websocketPort,
+		ROSConnected,
+		topic,
+		geometry_msgs_Linear,
+		geometry_msgs_Angular,
+		geometry_msgs_Twist
+	} from '$lib/ts/ros_communication';
 	import {
 		GamepadState,
 		registerGamepadConnectedListener,
 		registerGamepadDisconnectedListener,
-		setupGamepad
+		setupGamepad,
+		gamepadConnected
 	} from '$lib/ts/gamepad_communication';
 
 	import { notificationManager } from '$lib/ts/notification_manager';
 	import type { Notification } from '$lib/ts/notification_manager';
 
-	import type { Readable } from 'svelte/store';
+	import type { Readable, Writable } from 'svelte/store';
 	import { onMount } from 'svelte';
 
 	import log from '$lib/ts/logger';
@@ -48,14 +58,14 @@
 	// 	cameras = ['Camera 1', 'Camera 2', 'Camera 3', 'Camera 4', 'Camera 5'];
 	// }, 1000);
 
-	let mode = 'one_cam';
+	let mode: 'one_cam' | 'multi_cam' = 'one_cam';
 	$: cameraIcon = mode == 'one_cam' ? Grid20 : Checkbox20;
 
-	// Gamepad logic
 	let gamepadState: Readable<GamepadState>;
-	onMount(() => {
+	let robotMovementTopic: Writable<geometry_msgs_Twist>;
+	onMount(async () => {
 		registerGamepadConnectedListener((event: GamepadEvent) => {
-			gamepadState = setupGamepad(event.gamepad, 0.06);
+			gamepadState = setupGamepad(event.gamepad, 0.06, 30);
 
 			notificationManager.addNotification({
 				title: 'JS: Gamepad Connected',
@@ -73,36 +83,57 @@
 				type: 'toast'
 			});
 		});
+
+		// Svelte and/or SvelteKit don't support top level await (https://github.com/sveltejs/svelte/issues/5501, https://github.com/sveltejs/kit/issues/941)
+		// Because loading ROSLIB is async, everything that uses it has to also be async
+		const rosWS = await connectToROS(
+			() => {
+				notificationManager.addNotification({
+					title: 'ROS: Connected to websocket server',
+					subtitle: `ws://${robotIP}:${websocketPort}`,
+					level: 'success',
+					type: 'toast'
+				});
+			},
+			(error) => {
+				notificationManager.addNotification({
+					title: 'ROS: error connecting to websocket server',
+					level: 'error',
+					subtitle: error.target.url,
+					caption: new Date().toLocaleString(),
+					type: 'permanent'
+				});
+				log.debug(error);
+			},
+			() => {
+				notificationManager.addNotification({
+					title: 'ROS: Connection to websocket server closed',
+					subtitle: `ws://${robotIP}:${websocketPort}`,
+					level: 'error',
+					type: 'toast'
+				});
+			}
+		);
+		
+		robotMovementTopic = topic('/topic', 'geometry_msgs/Twist', 'publish');
 	});
 
-	var rosWS = connectToROS(
-		() => {
-			notificationManager.addNotification({
-				title: 'ROS: Connected to websocket server',
-				subtitle: `ws://${robotIP}:${websocketPort}`,
-				level: 'success',
-				type: 'toast'
-			});
-		},
-		(error) => {
-			notificationManager.addNotification({
-				title: 'ROS: error connecting to websocket server',
-				level: 'error',
-				subtitle: error.target.url,
-				caption: new Date().toLocaleString(),
-				type: 'permanent'
-			});
-			log.debug(error);
-		},
-		() => {
-			notificationManager.addNotification({
-				title: 'ROS: Connection to websocket server closed',
-				subtitle: `ws://${robotIP}:${websocketPort}`,
-				level: 'error',
-				type: 'toast'
-			});
+	$: {
+		if ($gamepadConnected && $ROSConnected) {
+			$robotMovementTopic = {
+				linear: {
+					x: $gamepadState.left.stick.x,
+					y: $gamepadState.left.stick.y,
+					z: Number($gamepadState.left.bumper.pressed) - Number($gamepadState.right.bumper.pressed)
+				},
+				angular: {
+					x: $gamepadState.right.stick.x,
+					y: $gamepadState.right.stick.y,
+					z: $gamepadState.left.trigger - $gamepadState.right.trigger
+				}
+			};
 		}
-	);
+	}
 </script>
 
 <Header>
@@ -113,6 +144,18 @@
 					<HeaderNavItem text={camera} href="#" />
 				{/each}
 			</HeaderNavMenu>
+		{:else}
+			<HeaderNavItem
+				text="You're Doing Great"
+				on:click={() => {
+					notificationManager.addNotification({
+						title: 'Yay!!',
+						subtitle: "You're doing a great job",
+						level: 'success',
+						type: 'toast'
+					});
+				}}
+			/>
 		{/if}
 		<HeaderGlobalAction
 			icon={cameraIcon}
@@ -132,8 +175,11 @@
 		<!-- padding: var(--cds-spacing-05); decrease padding all around the camera display -->
 		<Grid style="max-width: 100%">
 			<Row>
-				<Column aspectRatio="16x9" style="outline: 1px solid var(--cds-interactive-04)">16x9</Column
-				>
+				<Column aspectRatio="16x9" style="outline: 1px solid var(--cds-interactive-04)">
+					16x9
+					{$ROSConnected && $gamepadConnected} <br />
+					{JSON.stringify($gamepadState)}
+				</Column>
 			</Row>
 		</Grid>
 	</Content>

@@ -99,7 +99,8 @@
 
 <Theme bind:theme persist persistKey="__carbon-theme" />
 
-<Header company="Blueshift" platformName="Robotics">
+<!-- TODO: Add logo here once its done -->
+<Header company="[logo]" platformName="Blueshift Robotics">
 	<div slot="skip-to-content">
 		<SkipToContent />
 	</div>
