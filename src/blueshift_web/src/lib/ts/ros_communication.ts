@@ -2,6 +2,8 @@ import { browser } from '$app/env';
 import { readable, writable } from 'svelte/store';
 import type { Readable } from 'svelte/store';
 
+import 'roslib/build/roslib'
+
 import type {
     ROSMessageStrings,
     publishSubscribe,
@@ -16,11 +18,6 @@ if (browser) {
     robotIP = window.location.hostname;
 }
 export const websocketPort = "9090";
-
-// This tells typescript that the window object can have a property called ROSLIB
-declare global {
-    interface Window { ROSLIB: any; }
-}
 
 /**
  * This private function is used to set the state of the `ROSConnected` store
@@ -37,9 +34,6 @@ export const ROSConnected: Readable<Boolean> = readable(false, function start(se
     return function stop() { };
 });
 
-
-export let ROSLIB: any;
-
 let ros;
 
 /**
@@ -49,40 +43,29 @@ let ros;
  * @param onclose callback on disconnection from ros websocket server
  * @returns ROSLIB.Ros object for communicating with ROS
  */
-export async function connectToROS(onconnection = (): void => { }, onerror = (error): void => { }, onclose = (): void => { }) {
-    if (browser) {
-        // roslib creates a global variable called `ROSLIB`
-        await import('roslib/build/roslib');
+export function connectToROS(onconnection = (): void => { }, onerror = (error): void => { }, onclose = (): void => { }) {
+    // Setup the connection with ROS
+    ros = new window.ROSLIB.Ros({
+        url: `ws://${robotIP}:${websocketPort}`
+    });
 
-        // typescript doesn't know this variable exists, tricks it into thinking it does
-        window.ROSLIB = window.ROSLIB || {};
+    // Register Event handlers
+    ros.on('connection', function () {
+        setROSConnected(true)
+        onconnection();
+    });
 
-        // This exports the ROSLIB variable so it can be used in other files
-        ROSLIB = window.ROSLIB;
+    ros.on('error', function (error) {
+        setROSConnected(false)
+        onerror(error);
+    });
 
-        // Setup the connection with ROS
-        ros = new window.ROSLIB.Ros({
-            url: `ws://${robotIP}:${websocketPort}`
-        });
+    ros.on('close', function () {
+        setROSConnected(false)
+        onclose();
+    });
 
-        // Register Event handlers
-        ros.on('connection', function () {
-            setROSConnected(true)
-            onconnection();
-        });
-
-        ros.on('error', function (error) {
-            setROSConnected(false)
-            onerror(error);
-        });
-
-        ros.on('close', function () {
-            setROSConnected(false)
-            onclose();
-        });
-
-        return ros
-    }
+    return ros
 }
 
 export function topic<T extends ROSMessageStrings, direction extends publishSubscribe>(topicName: string, type: T, communicationDirection: direction): ReadableWriteableStore<ROSMessage<T>, direction> {
@@ -101,7 +84,7 @@ export function topic<T extends ROSMessageStrings, direction extends publishSubs
     } else {
         const readableTopicStore = readable(ROSMessageFactories[type]() as ROSMessage<T>, function start(set) {
             rosTopic.subscribe((msg) => {
-                set(msg);
+                set(msg as ROSMessage<T>);
             });
         });
         // for some reason the compiler thinks that the type here will be wrong, so we have to set it manually with as
