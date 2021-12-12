@@ -35,8 +35,8 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"loglevel": "^1.8.0",
 		"@types/roslib": "^1.1.8",
+		"loglevel": "^1.8.0",
 		"roslib": "^1.1.0"
 	}
 }

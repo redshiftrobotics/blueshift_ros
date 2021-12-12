@@ -2,7 +2,7 @@ import { browser } from '$app/env';
 import { readable, writable } from 'svelte/store';
 import type { Readable } from 'svelte/store';
 
-import 'roslib/build/roslib'
+import 'roslib'
 
 import type {
     ROSMessageStrings,
