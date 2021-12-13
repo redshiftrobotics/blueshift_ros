@@ -1,6 +1,7 @@
 import preprocess from 'svelte-preprocess';
 
 import { optimizeImports, optimizeCss } from 'carbon-preprocess-svelte';
+import tsconfigPaths from 'vite-tsconfig-paths'
 
 import adapter from '@sveltejs/adapter-node';
 
@@ -24,6 +25,7 @@ const config = {
 		vite: {
 			plugins: [
 				//   process.env.NODE_ENV === "production" && optimizeCss()
+				tsconfigPaths() // Give vite the ability to resolve imports using TypeScript's path mapping.
 			],
 			build: {
 				target: [ 'es2020' ] // required to use generated typescript interfaces for ros2 message definitions
