@@ -2,7 +2,7 @@ import { browser } from '$app/env';
 import { readable, writable } from 'svelte/store';
 import type { Readable } from 'svelte/store';
 
-import ROSLIB from 'roslib'
+import 'roslib'; // this creates a global ROSLIB varible that is accessed via `window.ROSLIB`
 
 import type {
     ROSMessageStrings,
