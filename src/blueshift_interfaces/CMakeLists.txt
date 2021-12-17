@@ -9,14 +9,35 @@ endif()
 find_package(ament_cmake REQUIRED)
 find_package(rosidl_default_generators REQUIRED)
 
-rosidl_generate_interfaces(${PROJECT_NAME}
+set(msg_files
   "msg/Time.msg"
   "msg/Num.msg"
+)
 
- )
-# uncomment the following section in order to fill in
-# further dependencies manually.
-# find_package(<dependency> REQUIRED)
+set(srv_files
+#  "srv/Service1.srv"
+#  "srv/Service2.srv"
+)
+
+rosidl_generate_interfaces(${PROJECT_NAME}
+  ${msg_files}
+  ${srv_files}
+)
+
+add_custom_command(
+  OUTPUT
+    ${CMAKE_SOURCE_DIR}/ts/ros_interfaces.ts
+  COMMAND
+    cd ${CMAKE_SOURCE_DIR} && /usr/bin/python3 src/generate_ts_interfaces.py ${CMAKE_BINARY_DIR} ${PROJECT_NAME} ${msg_files} ${srv_files}
+  COMMENT
+    "Generating typescript interface definitions"
+  VERBATIM
+)
+
+add_custom_target(
+  ts_interfaces ALL
+  DEPENDS ${CMAKE_SOURCE_DIR}/ts/ros_interfaces.ts
+)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
