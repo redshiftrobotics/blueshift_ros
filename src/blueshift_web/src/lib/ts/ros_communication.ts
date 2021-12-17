@@ -1,5 +1,5 @@
 import { browser } from '$app/env';
-import { readable, writable } from 'svelte/store';
+import { readable, Writable, writable } from 'svelte/store';
 import type { Readable } from 'svelte/store';
 
 import 'roslib'; // this creates a global ROSLIB varible that is accessed via `window.ROSLIB`
@@ -8,7 +8,8 @@ import type {
     ROSMessageStrings,
     publishSubscribe,
     ROSMessage,
-    ReadableWriteableStore
+    ReadableWriteableStore,
+    ROSMessagesTypeTSDefinitions
 } from '$lib/ts/utils/ros2_msg_definitions';
 import { ROSMessageFactories } from '$lib/ts/utils/ros2_msg_definitions';
 
@@ -91,3 +92,6 @@ export function topic<T extends ROSMessageStrings, direction extends publishSubs
         return readableTopicStore as ReadableWriteableStore<ROSMessage<T>, direction>;
     }
 }
+
+export type Topic<T extends ROSMessageStrings, direction extends publishSubscribe> = ReadableWriteableStore<ROSMessagesTypeTSDefinitions[T], direction>;
+

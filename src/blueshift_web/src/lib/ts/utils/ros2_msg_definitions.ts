@@ -45,7 +45,7 @@ function geometry_msgs_Twist_Factory(): geometry_msgs_Twist {
 
 export type ROSMessageStrings = "geometry_msgs/Linear" | "geometry_msgs/Angular" | "geometry_msgs/Twist";
 
-type ROSMessagesTypeTSDefinitions = {
+export type ROSMessagesTypeTSDefinitions = {
     "geometry_msgs/Linear": geometry_msgs_Linear,
     "geometry_msgs/Angular": geometry_msgs_Angular,
     "geometry_msgs/Twist": geometry_msgs_Twist

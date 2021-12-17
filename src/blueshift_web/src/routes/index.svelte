@@ -20,9 +20,9 @@
 		robotIP,
 		websocketPort,
 		ROSConnected,
-		topic,
+		topic
 	} from '$lib/ts/ros_communication';
-	import type { geometry_msgs_Twist } from '$lib/ts/utils/ros2_msg_definitions';
+	import type { Topic } from '$lib/ts/ros_communication';
 
 	import {
 		GamepadState,
@@ -61,7 +61,7 @@
 	$: cameraIcon = mode == 'one_cam' ? Grid20 : Checkbox20;
 
 	let gamepadState: Readable<GamepadState>;
-	let robotMovementTopic: Writable<geometry_msgs_Twist>;
+	let robotMovementTopic: Topic<'geometry_msgs/Twist', 'publish'>;
 	onMount(async () => {
 		registerGamepadConnectedListener((event: GamepadEvent) => {
 			gamepadState = setupGamepad(event.gamepad, 0.06, 30);
