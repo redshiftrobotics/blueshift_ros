@@ -4,12 +4,13 @@ import type { Readable } from 'svelte/store';
 
 import 'roslib'; // this creates a global ROSLIB varible that is accessed via `window.ROSLIB`
 
+// Import the compiled typescript interface definitions from blushift_interfaces
 import type {
-    ROSMessageStrings,
-    ROSMessage,
-    ROSMessagesTypeTSDefinitions
-} from '$lib/ts/utils/ros2_msg_definitions';
-import { ROSMessageFactories } from '$lib/ts/utils/ros2_msg_definitions';
+        ROSMessageStrings,
+        ROSMessage,
+        ROSMessagesTypeTSDefinitions
+} from 'blueshift_interfaces/interface_definitions';
+import { ROSMessageFactories } from 'blueshift_interfaces/interface_definitions';
 
 type publish = "publish";
 type subscribe = "subscribe";
