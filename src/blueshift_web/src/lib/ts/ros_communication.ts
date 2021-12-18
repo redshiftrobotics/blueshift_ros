@@ -6,12 +6,16 @@ import 'roslib'; // this creates a global ROSLIB varible that is accessed via `w
 
 import type {
     ROSMessageStrings,
-    publishSubscribe,
     ROSMessage,
-    ReadableWriteableStore,
     ROSMessagesTypeTSDefinitions
 } from '$lib/ts/utils/ros2_msg_definitions';
 import { ROSMessageFactories } from '$lib/ts/utils/ros2_msg_definitions';
+
+type publish = "publish";
+type subscribe = "subscribe";
+type publishSubscribe = publish | subscribe;
+type ReadableWriteableStore<T, direction extends publishSubscribe> =
+    direction extends subscribe ? Readable<T> : Writable<T>;
 
 // Only get the robot ip (which is equivalent to the website hostname) if this is running on the client (not if its being pre-rendered on the server)
 export let robotIP: string;

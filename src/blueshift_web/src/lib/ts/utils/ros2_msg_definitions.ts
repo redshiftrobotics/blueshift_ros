@@ -62,10 +62,3 @@ export let ROSMessageFactories = {
     "geometry_msgs/Angular": geometry_msgs_Angular_Factory,
     "geometry_msgs/Twist": geometry_msgs_Twist_Factory
 }
-
-type publish = "publish";
-type subscribe = "subscribe";
-export type publishSubscribe = publish | subscribe;
-
-export type ReadableWriteableStore<T, direction extends publishSubscribe> =
-    direction extends subscribe ? Readable<T> : Writable<T>;
