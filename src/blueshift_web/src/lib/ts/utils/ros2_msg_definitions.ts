@@ -1,5 +1,3 @@
-import type { Readable, Writable } from 'svelte/store';
-
 interface ROSMessageBase {
 }
 
