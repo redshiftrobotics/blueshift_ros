@@ -94,31 +94,32 @@ def generateTSInterface(ast):
     messages = ast.content.get_elements_of_type(Message)
     for message in messages:
         tsName, tsFactory, rosInterfaceString = getName(message.structure.namespaced_type)
-        
-        interface_str = f"export interface {tsName} extends ROSMessageBase {{"
-        factory_str = f"function {tsFactory}(): {tsName} {{ return {{"
-        
-        name_mapping[rosInterfaceString] = {
-            "interface": tsName,
-            "factory": tsFactory
-        }
 
-        for prop in message.structure.members:
-            ts_type = getTSType(prop.type, prop)
-            interface_str += ts_type["name"] + ": " + ts_type["ts_type"] + ";"
-            factory_str += ts_type["name"] + ": " + getDefaultValue(ts_type) + ","
-        for const in message.constants:
-            ts_type = getTSType(const.type, const, const=True)
-            interface_str += ts_type["name"] + ": " + ts_type["value"] + ";"
-            factory_str += ts_type["name"] + ": " + ts_type["value"] + ","
-        
-        interface_str += "}"
-        factory_str = factory_str[:-1] + "};}"
+        if rosInterfaceString not in name_mapping:
+            interface_str = f"export interface {tsName} extends ROSMessageBase {{"
+            factory_str = f"function {tsFactory}(): {tsName} {{ return {{"
+            
+            name_mapping[rosInterfaceString] = {
+                "interface": tsName,
+                "factory": tsFactory
+            }
 
-        output += "\n"
-        output += interface_str + "\n"
-        output += "\n"
-        output += factory_str + "\n"
+            for prop in message.structure.members:
+                ts_type = getTSType(prop.type, prop)
+                interface_str += ts_type["name"] + ": " + ts_type["ts_type"] + ";"
+                factory_str += ts_type["name"] + ": " + getDefaultValue(ts_type) + ","
+            for const in message.constants:
+                ts_type = getTSType(const.type, const, const=True)
+                interface_str += ts_type["name"] + ": " + ts_type["value"] + ";"
+                factory_str += ts_type["name"] + ": " + ts_type["value"] + ","
+            
+            interface_str += "}"
+            factory_str = factory_str[:-1] + "};}"
+
+            output += "\n"
+            output += interface_str + "\n"
+            output += "\n"
+            output += factory_str + "\n"
 
 def getTSType(T, prop=None, named=True, const=False):
     type_data = {
