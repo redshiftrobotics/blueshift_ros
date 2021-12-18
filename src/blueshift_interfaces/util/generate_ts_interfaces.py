@@ -1,5 +1,6 @@
 import sys
 import pathlib
+import subprocess
 
 from rosidl_parser.parser import parse_idl_file
 
@@ -25,10 +26,25 @@ basic_type_string_list = ["char", "wchar"]
 # test command
 # python3 util/generate_ts_interfaces.py /home/parallels/blueshift-ros/src/blueshift_interfaces/build/blueshift_interfaces blueshift_interfaces msg/Num.msg
 
+output = ""
+
+name_mapping = {}
+
+build_location = sys.argv[1]
+package_name = sys.argv[2]
+interface_list = sys.argv[3:]
+
 def main(args=None):
-    build_location = sys.argv[1]
-    package_name = sys.argv[2]
-    interface_list = sys.argv[3:]
+    global output
+    global name_mapping
+
+    output += "interface ROSMessageBase {}\n"
+    output += "\n"
+    output += """// https://mstn.github.io/2018/06/08/fixed-size-arrays-in-typescript/
+type FixedSizeArray<N extends number, T> = N extends 0 ? never[] : {
+    0: T;
+    length: N;
+} & ReadonlyArray<T>;\n"""
 
     for interface in interface_list:
         interface_name, interface_type = interface.split(".")    
@@ -40,22 +56,75 @@ def main(args=None):
         )
         generateTSInterface(interface_ast)
 
+    output += "\n"
+    output += "export type ROSMessageStrings = {" + "|".join(["'"+key+"'" for key in name_mapping.keys()]) + "};\n"
+
+    output += "\n"
+    output += "export type ROSMessagesTypeTSDefinitions = {" + ",".join(["'"+key+"'" + ": " + name_mapping[key]["interface"] for key in name_mapping.keys()]) + "}\n"
+
+    output += "\n"
+    output += "export let ROSMessageFactories = {" + ",".join(["'"+key+"'" + ": " + name_mapping[key]["factory"] for key in name_mapping.keys()]) + "}\n"
+    
+    output += "\n"
+    output += """// https://fettblog.eu/typescript-type-maps/
+// https://blog.rsuter.com/how-to-instantiate-a-generic-type-in-typescript/
+export type ROSMessage<T extends ROSMessageStrings> =
+    T extends keyof ROSMessagesTypeTSDefinitions ? ROSMessagesTypeTSDefinitions[T] :
+    ROSMessageBase;"""
+
+    with open("out.ts", "w") as f:
+        f.write(output)
+
 def generateTSInterface(ast):
+    global output
+
     includes = ast.content.get_elements_of_type(Include)
     for include in includes:
-        print(include.locator)
-    
+        pkg, folder, idl = include.locator.split("/")
+        ros_find_package = subprocess.Popen(["ros2", "pkg", "prefix", pkg], stdout=subprocess.PIPE ).communicate()[0]
+
+        if ros_find_package == "Package not found":
+            base_folder = pathlib.Path(build_location) / 'rosidl_adapter' / pkg / folder
+        else:
+            print(ros_find_package)
+            base_folder = pathlib.Path(ros_find_package) / 'share' / pkg / folder
+
+        print(base_folder / idl)
+        print()
+        print()
+
+        # IdlLocator(
+        #         build_location, pathlib.Path('rosidl_adapter') / package_name / (interface_name + ".idl")
+        #     )
+
     messages = ast.content.get_elements_of_type(Message)
     for message in messages:
-        print("  ", message.structure.namespaced_type.name, message.structure.namespaced_type.namespaces)
+        tsName, tsFactory, rosInterfaceString = getName(message.structure.namespaced_type)
+        
+        interface_str = f"export interface {tsName} extends ROSMessageBase {{"
+        factory_str = f"function {tsFactory}(): {tsName} {{ return {{"
+        
+        name_mapping[rosInterfaceString] = {
+            "interface": tsName,
+            "factory": tsFactory
+        }
+
         for prop in message.structure.members:
             ts_type = getTSType(prop.type, prop)
-            #print("    ", prop.name, prop.type)
-            print(ts_type["name"]+":", ts_type["ts_type"]+",")
+            interface_str += ts_type["name"] + ": " + ts_type["ts_type"] + ";"
+            factory_str += ts_type["name"] + ": " + getDefaultValue(ts_type) + ","
         for const in message.constants:
             ts_type = getTSType(const.type, const, const=True)
-            print(ts_type["name"]+":", ts_type["value"]+",")
-            #print("    ", const.name, const.type.typename, const.value)
+            interface_str += ts_type["name"] + ": " + ts_type["value"] + ";"
+            factory_str += ts_type["name"] + ": " + ts_type["value"] + ","
+        
+        interface_str += "}"
+        factory_str = factory_str[:-1] + "};}"
+
+        output += "\n"
+        output += interface_str + "\n"
+        output += "\n"
+        output += factory_str + "\n"
 
 def getTSType(T, prop=None, named=True, const=False):
     type_data = {
@@ -94,8 +163,12 @@ def getTSType(T, prop=None, named=True, const=False):
         type_data["ts_type"] = f"Array<{ getTSType(T.value_type, named=False) }>"
     elif isinstance(T, BoundedSequence):
         type_data["ts_type"] = f"FixedSizeArray<{ T.maximum_size }, { getTSType(T.value_type, named=False) }>"
+        type_data["length"] = T.maximum_size
+        type_data["ts_element_type"] = getTSType(T.value_type, named=False)
     elif isinstance(T, Array):
         type_data["ts_type"] = f"FixedSizeArray<{ T.size }, { getTSType(T.value_type, named=False) }>"
+        type_data["length"] = T.size
+        type_data["ts_element_type"] = getTSType(T.value_type, named=False)
     elif isinstance(T, NamespacedType):
         pass
     else:
@@ -105,5 +178,27 @@ def getTSType(T, prop=None, named=True, const=False):
         return type_data["ts_type"]
 
     return type_data
+
+def getName(namespace):
+    return f"{namespace.name}__{namespace.namespaces[0]}__{namespace.namespaces[1]}", \
+        f"{namespace.name}__{namespace.namespaces[0]}__{namespace.namespaces[1]}__Factory", \
+        f"{namespace.namespaces[0]}/{namespace.name}"
+
+default_value_dict = {
+    "number": "0",
+    "boolean": "false",
+    "string": "''"
+}
+
+def getDefaultValue(type_data):
+    if type_data['ts_type'] in default_value_dict:
+        return default_value_dict[type_data['ts_type']]
+    elif type_data['ts_type'].startswith("Array"):
+        return "[]"
+    elif type_data['ts_type'].startswith("FixedSizeArray"):
+        return "[" + ((default_value_dict[type_data['ts_element_type']] + ",") * type_data['length'])[:-1] + "]"
+    else:
+        raise TypeError(f"There is no default value for type {type_data['ts_type']}. Please add one")
+
 if __name__ == '__main__':
     main()
