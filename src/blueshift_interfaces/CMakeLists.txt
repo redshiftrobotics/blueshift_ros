@@ -26,7 +26,10 @@ rosidl_generate_interfaces(${PROJECT_NAME}
 
 add_custom_command(
   OUTPUT
-    ${CMAKE_SOURCE_DIR}/ts/ros_interfaces.ts
+    # This file doesn't exist, and it never should
+    # We're tricking cmake into thinking that running the following commands will create this file
+    # So if the file existed it wouldn't run the commands to build the interface definitions
+    ${CMAKE_SOURCE_DIR}/build/interface_definitions.stamp
   COMMAND
     cd ${CMAKE_SOURCE_DIR} && /usr/bin/python3 util/generate_ts_interfaces.py ${CMAKE_BINARY_DIR} ${PROJECT_NAME} ${msg_files} ${srv_files}
   COMMENT
@@ -36,7 +39,7 @@ add_custom_command(
 
 add_custom_target(
   ts_interfaces ALL
-  DEPENDS ${CMAKE_SOURCE_DIR}/ts/ros_interfaces.ts
+  DEPENDS ${CMAKE_SOURCE_DIR}/build/interface_definitions.stamp
 )
 
 if(BUILD_TESTING)
@@ -49,5 +52,10 @@ if(BUILD_TESTING)
   #set(ament_cmake_cpplint_FOUND TRUE)
   ament_lint_auto_find_test_dependencies()
 endif()
+
+install(FILES 
+ interface_definitions.ts
+ DESTINATION share/${PROJECT_NAME}/
+)
 
 ament_package()

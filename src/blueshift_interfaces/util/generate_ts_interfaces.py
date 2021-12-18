@@ -72,7 +72,7 @@ export type ROSMessage<T extends ROSMessageStrings> =
     T extends keyof ROSMessagesTypeTSDefinitions ? ROSMessagesTypeTSDefinitions[T] :
     ROSMessageBase;"""
 
-    with open("out.ts", "w") as f:
+    with open("interface_definitions.ts", "w") as f:
         f.write(output)
 
 def generateTSInterface(ast):
@@ -81,7 +81,7 @@ def generateTSInterface(ast):
     includes = ast.content.get_elements_of_type(Include)
     for include in includes:
         pkg, folder, idl = include.locator.split("/")
-        ros_find_package, err = subprocess.Popen(["ros2", "pkg", "prefix", pkg], stdout=subprocess.PIPE).communicate()
+        ros_find_package, err = subprocess.Popen(["ros2", "pkg", "prefix", pkg], stdout=subprocess.PIPE, stderr=subprocess.DEVNULL).communicate()
 
         if ros_find_package:
             base_folder = pathlib.Path(ros_find_package.decode().strip()) / 'share' / pkg / folder
