@@ -57,7 +57,7 @@ type FixedSizeArray<N extends number, T> = N extends 0 ? never[] : {
         generateTSInterface(interface_ast)
 
     output += "\n"
-    output += "export type ROSMessageStrings = {" + "|".join(["'"+key+"'" for key in name_mapping.keys()]) + "};\n"
+    output += "export type ROSMessageStrings = " + "|".join(["'"+key+"'" for key in name_mapping.keys()]) + ";\n"
 
     output += "\n"
     output += "export type ROSMessagesTypeTSDefinitions = {" + ",".join(["'"+key+"'" + ": " + name_mapping[key]["interface"] for key in name_mapping.keys()]) + "}\n"
@@ -81,21 +81,15 @@ def generateTSInterface(ast):
     includes = ast.content.get_elements_of_type(Include)
     for include in includes:
         pkg, folder, idl = include.locator.split("/")
-        ros_find_package = subprocess.Popen(["ros2", "pkg", "prefix", pkg], stdout=subprocess.PIPE ).communicate()[0]
+        ros_find_package, err = subprocess.Popen(["ros2", "pkg", "prefix", pkg], stdout=subprocess.PIPE).communicate()
 
-        if ros_find_package == "Package not found":
-            base_folder = pathlib.Path(build_location) / 'rosidl_adapter' / pkg / folder
+        if ros_find_package:
+            base_folder = pathlib.Path(ros_find_package.decode().strip()) / 'share' / pkg / folder
         else:
-            print(ros_find_package)
-            base_folder = pathlib.Path(ros_find_package) / 'share' / pkg / folder
+            base_folder = pathlib.Path(build_location) / 'rosidl_adapter' / pkg / folder
 
-        print(base_folder / idl)
-        print()
-        print()
-
-        # IdlLocator(
-        #         build_location, pathlib.Path('rosidl_adapter') / package_name / (interface_name + ".idl")
-        #     )
+        include_interface_ast = parse_idl_file(IdlLocator(base_folder, idl))
+        generateTSInterface(include_interface_ast)
 
     messages = ast.content.get_elements_of_type(Message)
     for message in messages:
@@ -170,7 +164,7 @@ def getTSType(T, prop=None, named=True, const=False):
         type_data["length"] = T.size
         type_data["ts_element_type"] = getTSType(T.value_type, named=False)
     elif isinstance(T, NamespacedType):
-        pass
+        type_data["ts_type"] = getName(T)[0]
     else:
         raise TypeError(f"Type {T} is not currently supported, please add a typescript definition")
 
@@ -180,8 +174,8 @@ def getTSType(T, prop=None, named=True, const=False):
     return type_data
 
 def getName(namespace):
-    return f"{namespace.name}__{namespace.namespaces[0]}__{namespace.namespaces[1]}", \
-        f"{namespace.name}__{namespace.namespaces[0]}__{namespace.namespaces[1]}__Factory", \
+    return f"{namespace.namespaces[0]}__{namespace.name}__{namespace.namespaces[1]}", \
+        f"{namespace.namespaces[0]}__{namespace.name}__{namespace.namespaces[1]}__Factory", \
         f"{namespace.namespaces[0]}/{namespace.name}"
 
 default_value_dict = {
@@ -197,6 +191,8 @@ def getDefaultValue(type_data):
         return "[]"
     elif type_data['ts_type'].startswith("FixedSizeArray"):
         return "[" + ((default_value_dict[type_data['ts_element_type']] + ",") * type_data['length'])[:-1] + "]"
+    elif type_data['ts_type'] in [name_mapping[key]["interface"] for key in name_mapping.keys()]:
+        return getName(type_data["type"])[1] + "()"
     else:
         raise TypeError(f"There is no default value for type {type_data['ts_type']}. Please add one")
 
