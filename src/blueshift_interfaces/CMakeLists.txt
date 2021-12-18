@@ -28,7 +28,7 @@ add_custom_command(
   OUTPUT
     ${CMAKE_SOURCE_DIR}/ts/ros_interfaces.ts
   COMMAND
-    cd ${CMAKE_SOURCE_DIR} && /usr/bin/python3 src/generate_ts_interfaces.py ${CMAKE_BINARY_DIR} ${PROJECT_NAME} ${msg_files} ${srv_files}
+    cd ${CMAKE_SOURCE_DIR} && /usr/bin/python3 util/generate_ts_interfaces.py ${CMAKE_BINARY_DIR} ${PROJECT_NAME} ${msg_files} ${srv_files}
   COMMENT
     "Generating typescript interface definitions"
   VERBATIM

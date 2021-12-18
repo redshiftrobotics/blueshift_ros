@@ -94,4 +94,3 @@ export function topic<T extends ROSMessageStrings, direction extends publishSubs
 }
 
 export type Topic<T extends ROSMessageStrings, direction extends publishSubscribe> = ReadableWriteableStore<ROSMessagesTypeTSDefinitions[T], direction>;
-
