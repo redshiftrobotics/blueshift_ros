@@ -49,14 +49,14 @@ export type ROSMessagesTypeTSDefinitions = {
     "geometry_msgs/Twist": geometry_msgs_Twist
 }
 
-// https://fettblog.eu/typescript-type-maps/
-// https://blog.rsuter.com/how-to-instantiate-a-generic-type-in-typescript/
-export type ROSMessage<T extends ROSMessageStrings> =
-    T extends keyof ROSMessagesTypeTSDefinitions ? ROSMessagesTypeTSDefinitions[T] :
-    ROSMessageBase;
-
 export let ROSMessageFactories = {
     "geometry_msgs/Linear": geometry_msgs_Linear_Factory,
     "geometry_msgs/Angular": geometry_msgs_Angular_Factory,
     "geometry_msgs/Twist": geometry_msgs_Twist_Factory
 }
+
+// https://fettblog.eu/typescript-type-maps/
+// https://blog.rsuter.com/how-to-instantiate-a-generic-type-in-typescript/
+export type ROSMessage<T extends ROSMessageStrings> =
+    T extends keyof ROSMessagesTypeTSDefinitions ? ROSMessagesTypeTSDefinitions[T] :
+    ROSMessageBase;
