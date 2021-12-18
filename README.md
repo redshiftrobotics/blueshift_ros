@@ -2,7 +2,8 @@
 
 ## Setup Instructions
 
-_Note: these instructions are meant for Ubuntu. If you are using a different distribution windows or macOS it will be more complicated._
+_Note: these instructions are meant for Ubuntu. If you are using a different distribution lie windows or macOS it will be more complicated._
+
 Install ROS Galactic following these instructions:
 
 - <https://docs.ros.org/en/galactic/Installation/Ubuntu-Install-Debians.html>
