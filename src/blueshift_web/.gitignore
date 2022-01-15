@@ -2,7 +2,6 @@
 .DS_Store
 
 # Svelte/Node files
-node_modules
 /.svelte-kit
 !src/lib
 /build

@@ -62,3 +62,6 @@ __pycache__
 
 # Debug files
 .pnpm-debug.log
+
+# Node
+node_modules

@@ -1,6 +1,6 @@
 import { browser } from '$app/env';
-import { readable, Writable, writable } from 'svelte/store';
-import type { Readable } from 'svelte/store';
+import { readable, writable } from 'svelte/store';
+import type { Readable, Writable } from 'svelte/store';
 
 import 'roslib'; // this creates a global ROSLIB varible that is accessed via `window.ROSLIB`
 
