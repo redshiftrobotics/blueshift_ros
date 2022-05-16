@@ -2,15 +2,7 @@ import { browser } from '$app/env';
 import { readable, writable } from 'svelte/store';
 import type { Readable, Writable } from 'svelte/store';
 
-import 'roslib'; // this creates a global ROSLIB varible that is accessed via `window.ROSLIB`
-
-// Import the compiled typescript interface definitions from blushift_interfaces
-import type {
-        ROSMessageStrings,
-        ROSMessage,
-        ROSMessagesTypeTSDefinitions
-} from 'blueshift_interfaces/interface_definitions';
-import { ROSMessageFactories } from 'blueshift_interfaces/interface_definitions';
+import * as ROSLIB from "roslib";
 
 type publish = "publish";
 type subscribe = "subscribe";
@@ -29,73 +21,82 @@ export const websocketPort = "9090";
  * This private function is used to set the state of the `ROSConnected` store
  * @param state _true_: connected, _false_: not connected
  */
-let setROSConnected = (state: Boolean) => null;
+let setROSConnected: (state: boolean) => void;
 
 /**
  * This svelte readable store keeps track of whether we are connected to ROS or not. It is updated automatically
  */
-export const ROSConnected: Readable<Boolean> = readable(false, function start(set) {
+export const ROSConnected: Readable<boolean> = readable<boolean>(false, function start(set) {
     setROSConnected = set;
 
-    return function stop() { };
+    return () => undefined;
 });
 
-let ros;
+let ros: ROSLIB.Ros;
 
 /**
  * Sets up communication with ROS (the robot's ip and default port of 9090 are used for the websocket communication)
  * @param onconnection callback on connection to ros websocket server
- * @param onerror callback if connection with ros websocket server faile
+ * @param onerror callback if connection with ros websocket server fail
  * @param onclose callback on disconnection from ros websocket server
  * @returns ROSLIB.Ros object for communicating with ROS
+ * 
+ * TODO (kavidey): figure out what type of error is passed to this callback
  */
-export function connectToROS(onconnection = (): void => { }, onerror = (error): void => { }, onclose = (): void => { }) {
+export function connectToROS(onconnection?: () => void, onerror?: (error: any) => void, onclose ?: () => void): ROSLIB.Ros {
     // Setup the connection with ROS
-    ros = new window.ROSLIB.Ros({
+    ros = new ROSLIB.Ros({
         url: `ws://${robotIP}:${websocketPort}`
     });
 
     // Register Event handlers
     ros.on('connection', function () {
-        setROSConnected(true)
-        onconnection();
+        setROSConnected(true);
+
+        if (onconnection)
+            onconnection();
     });
 
     ros.on('error', function (error) {
         setROSConnected(false)
-        onerror(error);
+
+        if (onerror)
+            onerror(error);
     });
 
     ros.on('close', function () {
         setROSConnected(false)
-        onclose();
+
+        if (onclose)
+            onclose();
     });
 
     return ros
 }
 
-export function topic<T extends ROSMessageStrings, direction extends publishSubscribe>(topicName: string, type: T, communicationDirection: direction): ReadableWriteableStore<ROSMessage<T>, direction> {
-    const rosTopic = new window.ROSLIB.Topic({
+export function topic<T, direction extends publishSubscribe>(topicName: string, messageType: string, communicationDirection: direction): ReadableWriteableStore<T, direction> {
+    const rosTopic = new ROSLIB.Topic<T>({
         ros: ros,
         name: topicName,
-        messageType: type
+        messageType: messageType
     });
 
     if (communicationDirection == "publish") {
-        const writeableTopicStore = writable(ROSMessageFactories[type]() as ROSMessage<T>);
-        writeableTopicStore.subscribe((msg: ROSMessage<T>) => {
-            rosTopic.publish(new window.ROSLIB.Message(msg));
+        const writeableTopicStore = writable<T>();
+        writeableTopicStore.subscribe((msg) => {
+            rosTopic.publish(msg);
         });
         return writeableTopicStore;
     } else {
-        const readableTopicStore = readable(ROSMessageFactories[type]() as ROSMessage<T>, function start(set) {
+        const readableTopicStore = readable<T>(undefined, function start(set) {
             rosTopic.subscribe((msg) => {
-                set(msg as ROSMessage<T>);
+                set(msg);
             });
         });
+        
         // for some reason the compiler thinks that the type here will be wrong, so we have to set it manually with as
-        return readableTopicStore as ReadableWriteableStore<ROSMessage<T>, direction>;
+        return readableTopicStore  as ReadableWriteableStore<T, direction> ;
     }
 }
 
-export type Topic<T extends ROSMessageStrings, direction extends publishSubscribe> = ReadableWriteableStore<ROSMessagesTypeTSDefinitions[T], direction>;
+export type Topic<T, direction extends publishSubscribe> = ReadableWriteableStore<T, direction>;

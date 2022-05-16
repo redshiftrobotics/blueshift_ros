@@ -15,6 +15,8 @@
 
 	import Header from '$lib/components/Header.svelte';
 
+	import * as ROSLIB from 'roslib';
+	import type { GeometryTwist } from '$lib/ts/utils/ros_types';
 	import {
 		connectToROS,
 		robotIP,
@@ -49,7 +51,7 @@
 	// }, 1500);
 
 	let selectedCamera = 'Loading...';
-	let cameras = [];
+	let cameras: string[] = [];
 
 	// testing only
 	// setTimeout(() => {
@@ -61,7 +63,7 @@
 	$: cameraIcon = mode == 'one_cam' ? Grid20 : Checkbox20;
 
 	let gamepadState: Readable<GamepadState>;
-	let robotMovementTopic: Topic<'geometry_msgs/Twist', 'publish'>;
+	let robotMovementTopic: Topic<GeometryTwist, 'publish'>;
 	onMount(async () => {
 		registerGamepadConnectedListener((event: GamepadEvent) => {
 			gamepadState = setupGamepad(event.gamepad, 0.06, 30);
@@ -85,7 +87,7 @@
 
 		// Svelte and/or SvelteKit don't support top level await (https://github.com/sveltejs/svelte/issues/5501, https://github.com/sveltejs/kit/issues/941)
 		// Because loading ROSLIB is async, everything that uses it has to also be async
-		const rosWS = await connectToROS(
+		const rosWebSocket = await connectToROS(
 			() => {
 				notificationManager.addNotification({
 					title: 'ROS: Connected to websocket server',
@@ -113,7 +115,7 @@
 				});
 			}
 		);
-		
+
 		robotMovementTopic = topic('/topic', 'geometry_msgs/Twist', 'publish');
 	});
 

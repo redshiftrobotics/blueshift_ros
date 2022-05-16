@@ -11,7 +11,8 @@
 		"format": "prettier --ignore-path .gitignore --write --plugin-search-dir=. ."
 	},
 	"devDependencies": {
-		"@sveltejs/adapter-node": "^1.0.0-next.55",
+		"@playwright/test": "^1.21.0",
+		"@sveltejs/adapter-auto": "next",
 		"@sveltejs/kit": "next",
 		"@typescript-eslint/eslint-plugin": "^4.31.1",
 		"@typescript-eslint/parser": "^4.31.1",
@@ -20,7 +21,6 @@
 		"carbon-icons-svelte": "^10.38.0",
 		"carbon-pictograms-svelte": "^12.0.0",
 		"carbon-preprocess-svelte": "^0.6.0",
-		"esbuild": "^0.13.15",
 		"eslint": "^7.32.0",
 		"eslint-config-prettier": "^8.3.0",
 		"eslint-plugin-svelte3": "^3.2.1",
@@ -37,7 +37,6 @@
 	"type": "module",
 	"dependencies": {
 		"@types/roslib": "^1.1.8",
-		"blueshift_interfaces": "link:../blueshift_interfaces",
 		"loglevel": "^1.8.0",
 		"roslib": "^1.1.0",
 		"vite": "^2.9.9"
