@@ -15,7 +15,6 @@
 
 	import Header from '$lib/components/Header.svelte';
 
-	import * as ROSLIB from 'roslib';
 	import type { GeometryTwist } from '$lib/ts/utils/ros_types';
 	import {
 		connectToROS,

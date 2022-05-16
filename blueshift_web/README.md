@@ -33,7 +33,7 @@ npm install -g pnpm
 pnpm install
 ```
 
-_Note_: All of the following commands including this one need to be run in the `src/blueshift_web` directory
+_Note_: All of the following commands including this one need to be run in the `blueshift_web` directory
 
 ## Run the website for development
 

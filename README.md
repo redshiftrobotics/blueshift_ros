@@ -34,7 +34,8 @@ rosdep install -i --from-path src --rosdistro galactic -y
 
 ## Build project
 
-To build the whole project run `colcon build`
+To build the whole project run `colcon build`.
+Note that you will need to follow the installation instructions in [blueshift_web](./blueshift_web/README.md) before it will build.
 
 - if you get the error `AssertionError: No verb extentions` follow [these instructions](https://github.com/aws-robotics/aws-iot-bridge-example/issues/2#issuecomment-810040837)
 To build specific packages run `colcon build --packages-select YOUR_PKG_NAME`
