@@ -9,38 +9,14 @@ endif()
 find_package(ament_cmake REQUIRED)
 find_package(rosidl_default_generators REQUIRED)
 
-set(msg_files
+rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/Time.msg"
   "msg/Num.msg"
-)
 
-set(srv_files
-#  "srv/Service1.srv"
-#  "srv/Service2.srv"
-)
-
-rosidl_generate_interfaces(${PROJECT_NAME}
-  ${msg_files}
-  ${srv_files}
-)
-
-add_custom_command(
-  OUTPUT
-    # This file doesn't exist, and it never should
-    # We're tricking cmake into thinking that running the following commands will create this file
-    # So if the file existed it wouldn't run the commands to build the interface definitions
-    ${CMAKE_SOURCE_DIR}/build/interface_definitions.stamp
-  COMMAND
-    cd ${CMAKE_SOURCE_DIR} && /usr/bin/python3 util/generate_ts_interfaces.py ${CMAKE_BINARY_DIR} ${PROJECT_NAME} ${msg_files} ${srv_files}
-  COMMENT
-    "Generating typescript interface definitions"
-  VERBATIM
-)
-
-add_custom_target(
-  ts_interfaces ALL
-  DEPENDS ${CMAKE_SOURCE_DIR}/build/interface_definitions.stamp
-)
+ )
+# uncomment the following section in order to fill in
+# further dependencies manually.
+# find_package(<dependency> REQUIRED)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
@@ -52,10 +28,5 @@ if(BUILD_TESTING)
   #set(ament_cmake_cpplint_FOUND TRUE)
   ament_lint_auto_find_test_dependencies()
 endif()
-
-install(FILES 
- interface_definitions.ts
- DESTINATION share/${PROJECT_NAME}/
-)
 
 ament_package()
