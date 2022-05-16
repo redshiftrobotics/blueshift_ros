@@ -31,6 +31,6 @@
 <OverlayToastNotifications />
 
 <style lang="scss">
-	// @import 'carbon-components-svelte/css/all.scss';
+	// @use '@carbon/styles';
 	@import 'carbon-components-svelte/css/all.css';
 </style>
