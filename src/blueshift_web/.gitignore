@@ -1,8 +1,0 @@
-# macOS files
-.DS_Store
-
-# Svelte/Node files
-/.svelte-kit
-!src/lib
-/build
-/package

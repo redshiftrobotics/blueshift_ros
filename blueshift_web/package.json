@@ -39,6 +39,7 @@
 		"@types/roslib": "^1.1.8",
 		"blueshift_interfaces": "link:../blueshift_interfaces",
 		"loglevel": "^1.8.0",
-		"roslib": "^1.1.0"
+		"roslib": "^1.1.0",
+		"vite": "^2.9.9"
 	}
 }

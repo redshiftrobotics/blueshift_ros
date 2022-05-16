@@ -28,5 +28,6 @@
 			"roslib": ["node_modules/roslib/build/roslib"]
 		}
 	},
-	"include": ["src/**/*.d.ts", "src/**/*.js", "src/**/*.ts", "src/**/*.svelte"]
+	"include": ["src/**/*.d.ts", "src/**/*.js", "src/**/*.ts", "src/**/*.svelte"],
+	"extends": "./.svelte-kit/tsconfig.json"
 }

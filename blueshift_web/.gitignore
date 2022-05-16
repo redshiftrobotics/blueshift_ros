@@ -1,0 +1,5 @@
+# Svelte/Node Files
+/.svelte-kit
+!src/lib
+/build
+/package
