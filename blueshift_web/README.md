@@ -65,4 +65,4 @@ To run it (this also starts the rosbridge_server to facilitate JS<->ROS communic
 ros2 launch blueshift_web simple.launch
 ```
 
-_Note: if there are any errors about missing packages, make download all dependencies as described [here](../../README.md#install-dependencies)_
+_Note: if there are any errors about missing packages, make download all dependencies as described [here](../README.md#install-dependencies)_

@@ -2,7 +2,7 @@
 
 ## Setup Instructions
 
-_Note: these instructions are meant for Ubuntu. If you are using a different distribution lie windows or macOS it will be more complicated._
+_Note: these instructions are meant for Ubuntu. If you are using a different distribution, ie windows or macOS, it will be more complicated._
 
 Install ROS Galactic following these instructions:
 
@@ -10,7 +10,7 @@ Install ROS Galactic following these instructions:
 - <https://docs.ros.org/en/galactic/Tutorials/Configuring-ROS2-Environment.html>
 - <https://docs.ros.org/en/galactic/Tutorials/Colcon-Tutorial.html>
 
-### Clone this repository
+### Clone this repository into the `src` folder of your workspace
 
 ```bash
 git clone https://github.com/redshiftrobotics/blueshift-ros.git
