@@ -85,16 +85,16 @@ let lastGamepadState: GamepadState = new GamepadState();
  * This private function is used to set the state of the `gamepadConnected` store
  * @param state _true_: connected, _false_: not connected
  */
- let setGamepadConnected = (state: Boolean) => null;
+let setGamepadConnected = (state: Boolean) => null;
 
- /**
-  * This svelte readable store keeps track of whether we are connected to a gamepad or not. It is updated automatically
-  */
- export const gamepadConnected: Readable<Boolean> = readable(false, function start(set) {
+/**
+ * This svelte readable store keeps track of whether we are connected to a gamepad or not. It is updated automatically
+ */
+export const gamepadConnected: Readable<Boolean> = readable(false, function start(set) {
 	setGamepadConnected = set;
- 
-	 return function stop() {};
- });
+
+	return function stop() {};
+});
 
 /**
  * returns 0 for any number within the threshold, and the number otherwise

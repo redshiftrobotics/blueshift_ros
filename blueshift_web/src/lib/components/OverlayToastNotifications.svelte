@@ -18,9 +18,7 @@
 	>
 		{#each $notificationManager as notification (notification.id)}
 			{#if notification.type !== 'permanent-no-toast'}
-				<div
-					transition:fly={{ x: 300 }}
-				>
+				<div transition:fly={{ x: 300 }}>
 					<InlineNotification
 						hideCloseButton
 						title={notification.title}
