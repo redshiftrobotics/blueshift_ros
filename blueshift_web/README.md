@@ -62,7 +62,7 @@ _Note 2_: Building this with the `--symlink-install` flag seems to raise cause a
 To run it (this also starts the rosbridge_server to facilitate JS<->ROS communication)
 
 ```bash
-ros2 launch blueshift_web simple.launch
+ros2 launch blueshift_web simple.launch.py
 ```
 
 _Note: if there are any errors about missing packages, make download all dependencies as described [here](../README.md#install-dependencies)_
