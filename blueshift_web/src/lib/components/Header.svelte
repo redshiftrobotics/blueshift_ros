@@ -36,12 +36,13 @@
 	// Full screen handler (modified from: https://github.com/codechips/svelte-fullscreen-example)
 	let fs = false;
 	$: fullscreenIcon = fs ? Minimize20 : Maximize20;
-	let fsToggle;
+	let fsToggle: () => void;
 
 	onMount(() => {
 		// boring plain js fullscreen support stuff below
-		const noop = () => {};
+		const noop = () => undefined;
 
+		// TODO (kavidey): remove the @ts-ignore
 		const fullscreenSupport = !!(
 			document.fullscreenEnabled ||
 			// @ts-ignore
@@ -64,11 +65,14 @@
 			noop
 		).bind(document);
 
-		const requestFullscreen = (fsContainer) => {
+		const requestFullscreen = (fsContainer: HTMLElement) => {
 			const requestFS = (
 				fsContainer.requestFullscreen ||
+				// @ts-ignore
 				fsContainer.mozRequestFullScreen ||
+				// @ts-ignore
 				fsContainer.webkitRequestFullscreen ||
+				// @ts-ignore
 				fsContainer.msRequestFullscreen ||
 				noop
 			).bind(document.documentElement);
@@ -174,7 +178,12 @@
 								caption={notification.caption}
 								style="width: 16rem; margin-top: 0;"
 								on:close={() => {
-									notificationManager.removeNotification(notification.id);
+									if (!notification.id) {
+										throw 'notification id is not defined';
+									} else {
+										notificationManager.removeNotification(notification.id);
+									}
+
 									// make sure the notification panel stays open when a notification is dismissed
 									// TODO: this is a hack, find a better way to do this
 									setTimeout(() => {

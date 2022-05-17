@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	/**
 	 * @typedef {{ delay?: number; duration?: number; easing?: (t: number) => number; }} HeaderActionSlideTransition
 	 */
@@ -8,20 +8,20 @@
 	 * Specify the icon to render
 	 * @type {typeof import("svelte").SvelteComponent}
 	 */
-	export let icon = AppSwitcher20;
+	export let icon: any = AppSwitcher20;
 	/**
 	 * Specify the icon to render when the action panel is open
 	 * @type {typeof import("svelte").SvelteComponent}
 	 */
-	export let closeIcon = Close20;
+	export let closeIcon: any = Close20;
 	/**
 	 * Specify the text
 	 * Alternatively, use the named slot "text" (e.g., <div slot="text">...</div>)
 	 * @type {string}
 	 */
-	export let text = undefined;
+	export let text: string;
 	/** Obtain a reference to the button HTML element */
-	export let ref = null;
+	export let ref: HTMLButtonElement = undefined;
 	/**
 	 * Customize the panel transition (i.e., `transition:slide`)
 	 * Set to `false` to disable the transition
@@ -34,7 +34,7 @@
 	import AppSwitcher20 from 'carbon-icons-svelte/lib/AppSwitcher20/AppSwitcher20.svelte';
 	import { Icon } from 'carbon-components-svelte';
 	const dispatch = createEventDispatcher();
-	let refPanel = null;
+	let refPanel: HTMLDivElement;
 </script>
 
 <svelte:window

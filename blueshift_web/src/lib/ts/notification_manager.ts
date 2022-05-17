@@ -35,7 +35,7 @@ export interface Notification {
  * @remarks `toast` notifications are displayed by the _OverlayToastNotififcations_ component. `permanent` notifications are displayed by the _Header_ component.
  */
 function createNotificationManager(toastDisplayTime = 2500) {
-	const { subscribe, set, update } = writable([]);
+	const { subscribe, set, update } = writable<Notification[]>([]);
 
 	let currId = 0;
 
@@ -53,15 +53,19 @@ function createNotificationManager(toastDisplayTime = 2500) {
 						// then remove it, and add it back with the new type
 						if (notifications.some((n) => n.id === notification.id)) {
 							// remove it
-							let notifications_without_notification = notifications.filter(
+							const notifications_without_notification = notifications.filter(
 								(n) => n.id !== notification.id
 							);
 
 							// add it back with the new type and sort the array to make sure everythign is in the right order
 							notification.type = 'permanent-no-toast';
-							return [...notifications_without_notification, notification].sort(
-								(a, b) => a.id - b.id
-							);
+							return [...notifications_without_notification, notification].sort((a, b) => {
+								if (!(a.id && b.id)) {
+									throw 'notification id is not defined';
+								} else {
+									return a.id - b.id;
+								}
+							});
 						} else {
 							return notifications;
 						}

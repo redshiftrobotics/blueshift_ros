@@ -2,7 +2,6 @@
 	import { InlineNotification } from 'carbon-components-svelte';
 
 	import { notificationManager } from '$lib/ts/notification_manager';
-	import type { Notification } from '$lib/ts/notification_manager';
 
 	import { fly } from 'svelte/transition';
 </script>

@@ -1,9 +1,9 @@
 import log from 'loglevel';
 import { notificationManager } from './notification_manager';
 
-let originalFactory = log.methodFactory;
+const originalFactory = log.methodFactory;
 log.methodFactory = function (methodName, logLevel, loggerName) {
-	let rawMethod = originalFactory(methodName, logLevel, loggerName);
+	const rawMethod = originalFactory(methodName, logLevel, loggerName);
 
 	return function (message) {
 		switch (methodName) {

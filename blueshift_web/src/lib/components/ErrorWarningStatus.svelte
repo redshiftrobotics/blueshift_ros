@@ -4,7 +4,7 @@
 	import WarningAlt20 from 'carbon-icons-svelte/lib/WarningAlt20';
 	import WarningAltFilled20 from 'carbon-icons-svelte/lib/WarningAltFilled20';
 
-	export let style;
+	export let style: string;
 	export let numWarnings = 0;
 	export let numErrors = 0;
 </script>
