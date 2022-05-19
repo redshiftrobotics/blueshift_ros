@@ -60,6 +60,11 @@ If it needs to be accessible on other computers on your network
 pnpm run dev -- --host
 ```
 
+If the website needs to communicate with ROS (i.e. you are doing anything more than UI development), you need to start the rosbridge node:
+```bash
+ros2 launch rosbridge_server rosbridge_websocket_launch.xml
+```
+
 ## Running the website with ROS
 
 To build it:
