@@ -17,13 +17,14 @@ nvm install 17
 ```
 ### `snap` method (works on ubuntu only, recommended for the robot's computer)
 ```bash
-sudo snap installl node --classic --channel=17
+sudo snap install node --classic --channel=17
 ```
 
 ### Verify that node is correctly installed and that you have the version
 ```bash
-sudo snap installl node --classic --channel=17
+node -v
 ```
+This should print out `v17.*.*` if node is installed correctly
 
 ## Install `pnpm`
 
@@ -47,7 +48,7 @@ pnpm install
 
 ## Run the website for development
 
-_Note_: Until RobotWebTools/roslibjs#382 is fixed, running the website in development mode won't work. The ROS based build/launch scripts are still functional, but when developing the website, it needs to be manually built using `pnpm run build` and then `pnpm run preview`
+_Note_: Until RobotWebTools/roslibjs#548 is fixed, running the website in development mode won't work. The ROS based build/launch scripts are still functional, but when developing the website, it needs to be manually built using `pnpm run build` and then `pnpm run preview`
 
 ```bash
 pnpm run dev
