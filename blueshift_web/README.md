@@ -1,18 +1,30 @@
 # Setup Instructions
 
-## Install [`nvm`](https://github.com/nvm-sh/nvm)
+## Install `node` 17
 
+### `nvm` method (works on any OS, recommended for development on personal computers)
+I would recommend using nvm [`nvm`](https://github.com/nvm-sh/nvm) (**N**ode **V**ersion **M**anager), it provides an easy way to install multiple versions of node on a single computer.
+
+**Install `nvm`**
 ```bash
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash
 ```
-
 Open a new terminal to get access to `nvm`
 
-## Install `node`
-
+**Install `node`**
 ```bash
 nvm install 17
 ```
+### `snap` method (works on ubuntu only, recommended for the robot's computer)
+```bash
+sudo snap install node --classic --channel=17
+```
+
+### Verify that node is correctly installed and that you have the version
+```bash
+node -v
+```
+This should print out `v17.*.*` if node is installed correctly
 
 ## Install `pnpm`
 
@@ -28,14 +40,15 @@ npm install -g pnpm
 ```
 
 ## Download all node packages
+_Note_: All of the following commands including this one need to be run in the `blueshift_web` directory
 
 ```bash
 pnpm install
 ```
 
-_Note_: All of the following commands including this one need to be run in the `blueshift_web` directory
-
 ## Run the website for development
+
+_Note_: Until RobotWebTools/roslibjs#548 is fixed, running the website in development mode won't work. The ROS based build/launch scripts are still functional, but when developing the website, it needs to be manually built using `pnpm run build` and then `pnpm run preview`
 
 ```bash
 pnpm run dev
@@ -45,6 +58,11 @@ If it needs to be accessible on other computers on your network
 
 ```bash
 pnpm run dev -- --host
+```
+
+If the website needs to communicate with ROS (i.e. you are doing anything more than UI development), you need to start the rosbridge node:
+```bash
+ros2 launch rosbridge_server rosbridge_websocket_launch.xml
 ```
 
 ## Running the website with ROS
