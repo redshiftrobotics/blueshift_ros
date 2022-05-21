@@ -2,7 +2,8 @@ import { browser } from '$app/env';
 import { readable, writable } from 'svelte/store';
 import type { Readable, Writable } from 'svelte/store';
 
-import * as ROSLIB from 'roslib';
+// Import ROSLIB using a custom shim that provides module syntax (importing it normally will throw an error)
+import ROSLIB from "$lib/ts/utils/roslib.shim";
 
 type publish = 'publish';
 type subscribe = 'subscribe';
