@@ -28,7 +28,7 @@ export interface Notification {
  * @param toastDisplayTime the amount of time in milliseconds that a toast notification will be displayed
  * @returns `subscribe`, `addNotification`, and `removeNotification`
  *
- * `subscribe` is a "normal" svelte store subscribe functoin
+ * `subscribe` is a "normal" svelte store subscribe function
  * `addNotification` adds a notification to the notification list
  * `removeNotification` removes a notification from the notification list
  *

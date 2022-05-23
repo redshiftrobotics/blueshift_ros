@@ -78,7 +78,7 @@ export function registerGamepadDisconnectedListener(callback: (event: GamepadEve
 	});
 }
 
-// TODO: update this to work with multiple gamepads (wkeep track of them by their id, etc.)
+// TODO: update this to work with multiple gamepads (keep track of them by their id, etc.)
 let lastGamepadState: GamepadState = new GamepadState();
 
 /**
@@ -112,7 +112,7 @@ function threshold(value: number, threshold: number): number {
 /**
  * Gets the current state of a gamepad in human-readable format
  * @param gamepad gamepad object to get the state from
- * @param th threshold for analog inputs (joysticks, triggers)
+ * @param th deadband threshold range for analog inputs (joysticks, triggers)
  * @returns gamepad state
  */
 function getGamepadState(gamepad: Gamepad, th: number): GamepadState {

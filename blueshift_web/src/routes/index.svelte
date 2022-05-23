@@ -62,7 +62,7 @@
 	$: cameraIcon = mode == 'one_cam' ? Grid20 : Checkbox20;
 
 	let gamepadState: Readable<GamepadState>;
-	let robotMovementTopic: Topic<GeometryTwist, 'publish'>;
+
 	onMount(async () => {
 		registerGamepadConnectedListener((event: GamepadEvent) => {
 			gamepadState = setupGamepad(event.gamepad, 0.06, 30);
@@ -83,39 +83,39 @@
 				type: 'toast'
 			});
 		});
+	});
 
-		// Svelte and/or SvelteKit don't support top level await (https://github.com/sveltejs/svelte/issues/5501, https://github.com/sveltejs/kit/issues/941)
-		// Because loading ROSLIB is async, everything that uses it has to also be async
-		const rosWebSocket = await connectToROS(
-			() => {
-				notificationManager.addNotification({
-					title: 'ROS: Connected to websocket server',
-					subtitle: `ws://${robotIP}:${websocketPort}`,
-					level: 'success',
-					type: 'toast'
-				});
-			},
-			(error) => {
-				notificationManager.addNotification({
-					title: 'ROS: error connecting to websocket server',
-					level: 'error',
-					subtitle: error.target.url,
-					caption: new Date().toLocaleString(),
-					type: 'permanent'
-				});
-				log.debug(error);
-			},
-			() => {
-				notificationManager.addNotification({
-					title: 'ROS: Connection to websocket server closed',
-					subtitle: `ws://${robotIP}:${websocketPort}`,
-					level: 'error',
-					type: 'toast'
-				});
-			}
-		);
-
-		robotMovementTopic = topic('/topic', 'geometry_msgs/Twist', 'publish');
+	const rosWebSocket = connectToROS(
+		() => {
+			notificationManager.addNotification({
+				title: 'ROS: Connected to websocket server',
+				subtitle: `ws://${robotIP}:${websocketPort}`,
+				level: 'success',
+				type: 'toast'
+			});
+		},
+		(error) => {
+			notificationManager.addNotification({
+				title: 'ROS: error connecting to websocket server',
+				level: 'error',
+				subtitle: error.target.url,
+				caption: new Date().toLocaleString(),
+				type: 'permanent'
+			});
+			log.debug(error);
+		},
+		() => {
+			notificationManager.addNotification({
+				title: 'ROS: Connection to websocket server closed',
+				subtitle: `ws://${robotIP}:${websocketPort}`,
+				level: 'error',
+				type: 'toast'
+			});
+		}
+	);
+	let robotMovementTopic = topic<GeometryTwist, 'publish'>('/topic', 'geometry_msgs/Twist', 'publish', {
+		linear: { x: 0, y: 0, z: 0 },
+		angular: { x: 0, y: 0, z: 0 }
 	});
 
 	$: {

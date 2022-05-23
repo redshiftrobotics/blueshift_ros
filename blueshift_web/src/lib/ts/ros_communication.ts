@@ -77,10 +77,22 @@ export function connectToROS(
 	return ros;
 }
 
+/**
+ * Creates a svelte store that can be used to interact with ROS topics
+ * @param topicName the name of the topic to publish/subscribe to
+ * @param messageType the name of the message type of the topic (this is the ROS message name, not typscript, ex: std_msgs/String or geometry_msgs/Twist)
+ * @param communicationDirection 'publish' or 'subscribe'
+ * @param initialValue the initial value of the store
+ * @returns a svelte readable/writable store that can be used to send or recieve messages on a ROS topic
+ * 
+ * @remarks
+ * If `communicationDirection` is 'publish', the returned store is a writable store. If `communicationDirection` is 'subscribe', the returned store is a readable store.
+ */
 export function topic<T, direction extends publishSubscribe>(
 	topicName: string,
 	messageType: string,
-	communicationDirection: direction
+	communicationDirection: direction,
+	initialValue: T
 ): ReadableWriteableStore<T, direction> {
 	const rosTopic = new ROSLIB.Topic<T>({
 		ros: ros,
@@ -89,13 +101,13 @@ export function topic<T, direction extends publishSubscribe>(
 	});
 
 	if (communicationDirection == 'publish') {
-		const writeableTopicStore = writable<T>();
+		const writeableTopicStore = writable<T>(initialValue);
 		writeableTopicStore.subscribe((msg) => {
 			rosTopic.publish(msg);
 		});
 		return writeableTopicStore;
 	} else {
-		const readableTopicStore = readable<T>(undefined, function start(set) {
+		const readableTopicStore = readable<T>(initialValue, function start(set) {
 			rosTopic.subscribe((msg) => {
 				set(msg);
 			});
