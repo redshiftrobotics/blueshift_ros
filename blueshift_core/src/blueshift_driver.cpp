@@ -13,21 +13,21 @@ class MinimalSubscriber : public rclcpp::Node
     MinimalSubscriber()
     : Node("minimal_subscriber")
     {
-      publisher_ = this->create_publisher<std_msgs::msg::String>("topic2", 10);
-      subscription_ = this->create_subscription<std_msgs::msg::String>(
+      //publisher_ = this->create_publisher<std_msgs::msg::String>("topic2", 10);
+      subscription_ = this->create_subscription<geometry_msgs::msg::Twist>(
       "topic", 10, std::bind(&MinimalSubscriber::topic_callback, this, _1));
     }
 
   private:
-    void topic_callback(const std_msgs::msg::String &msg) const
+    void topic_callback(const geometry_msgs::msg::Twist &msg) const
     {
-      RCLCPP_INFO(this->get_logger(), "yes '%s'", msg.data.c_str());
-      auto message = std_msgs::msg::String();
-      message.data = msg.data;
-      publisher_->publish(message);
+      //RCLCPP_INFO(this->get_logger(), "yes '%s'", std::to_string(msg.linear.x).c_str());
+      //auto message = std_msgs::msg::String();
+      //message.data = "hi";
+      //publisher_->publish(message);
     }
-    rclcpp::Subscription<std_msgs::msg::String>::SharedPtr subscription_;
-    rclcpp::Publisher<std_msgs::msg::String>::SharedPtr publisher_;
+    rclcpp::Subscription<geometry_msgs::msg::Twist>::SharedPtr subscription_;
+    //rclcpp::Publisher<std_msgs::msg::String>::SharedPtr publisher_;
 };
 
 int main(int argc, char * argv[])
