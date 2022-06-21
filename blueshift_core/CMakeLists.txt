@@ -20,8 +20,12 @@ find_package(std_msgs REQUIRED)
 add_executable(listener src/subscriber_member_function.cpp)
 ament_target_dependencies(listener rclcpp blueshift_interfaces) 
 
+add_executable(control src/blueshift_driver.cpp)
+ament_target_dependencies(control rclcpp blueshift_interfaces)
+
 install(TARGETS
   listener
+  control
   DESTINATION lib/${PROJECT_NAME})
 
 
