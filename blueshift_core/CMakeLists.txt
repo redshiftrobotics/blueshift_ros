@@ -14,16 +14,14 @@ find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(std_msgs REQUIRED)  
 find_package(geometry_msgs REQUIRED)
-
 find_package(blueshift_interfaces REQUIRED)   
-
 
 
 add_executable(listener src/subscriber_member_function.cpp)
 ament_target_dependencies(listener rclcpp blueshift_interfaces) 
 
 add_executable(control src/blueshift_driver.cpp)
-ament_target_dependencies(control rclcpp blueshift_interfaces)
+ament_target_dependencies(control rclcpp blueshift_interfaces geometry_msgs)
 
 install(TARGETS
   listener
