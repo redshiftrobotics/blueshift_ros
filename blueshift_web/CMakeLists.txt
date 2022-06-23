@@ -54,7 +54,9 @@ install(FILES
 install(DIRECTORY
   launch
   build
-  node_modules
+  # DO NOT copy node_modules. There are so many libraries that it will take 5+ minues to copy them over
+  # Additionally because svelte compiles all the libraries into your app, there are no runtime dependencies
+  # node_modules
   DESTINATION share/${PROJECT_NAME}/
 )
 
