@@ -1,0 +1,8 @@
+float64 top_front_left
+float64 top_front_right
+float64 top_back_left
+float64 top_back_right
+float64 bottom_front_left
+float64 bottom_front_right
+float64 bottom_back_left
+float64 bottom_back_right
