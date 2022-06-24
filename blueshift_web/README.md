@@ -73,9 +73,9 @@ To build it:
 colcon build --packages-select blueshift_web
 ```
 
-_Note 1_: This first time it is built, this might take a long time, because all the node packages need to be copied over to the install folder. Every subsequent time, it should only copy over the difference, so it should be faster. _TODO later: there may be a way to just re-download them into the install directory which might be quicker._
+~~_Note 1_: This first time it is built, this might take a long time, because all the node packages need to be copied over to the install folder. Every subsequent time, it should only copy over the difference, so it should be faster. _TODO later: there may be a way to just re-download them into the install directory which might be quicker._~~
 
-_Note 2_: Building this with the `--symlink-install` flag seems to raise cause an issue with symlinks, so this package (and probably the whole workspace) should be built _without_ that flag.
+~~_Note 2_: Building this with the `--symlink-install` flag seems to raise cause an issue with symlinks, so this package (and probably the whole workspace) should be built _without_ that flag.~~ These should be fixed as [of](https://github.com/redshiftrobotics/blueshift_ros/commit/8627c5a2cc00898b1daa676ac3e7ce17158a3080) [these](https://github.com/redshiftrobotics/blueshift_ros/commit/2983a4e9bd095231ad10006e8be98e7f1cd1f222) [commits](https://github.com/redshiftrobotics/blueshift_ros/commit/8b9004af5f8bbead86375f798ccee82f673eed8b)
 
 To run it (this also starts the rosbridge_server to facilitate JS<->ROS communication)
 
