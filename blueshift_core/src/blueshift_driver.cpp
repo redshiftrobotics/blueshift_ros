@@ -19,23 +19,23 @@ public:
         "input", 10, std::bind(&Control::topic_callback, this, std::placeholders::_1));
   }
 
-  void respond(){
-    this->get_parameter("holonomic_speed_limiter",parameter_value_);
+  void respond()
+  {
+    this->get_parameter("holonomic_speed_limiter", holonomic_speed_limiter_parameter_);
   }
 
-
-
 private:
-  void topic_callback(const geometry_msgs::msg::Twist &msg) const
+  void topic_callback(const geometry_msgs::msg::Twist &msg)
   {
-    RCLCPP_INFO(this->get_logger(), "I recieved Linear x:'%s'", std::to_string(msg.linear.x).c_str());
+    RCLCPP_INFO(this->get_logger(), "I received Linear x:'%s'", std::to_string(msg.linear.x).c_str());
     auto message = blueshift_interfaces::msg::Motors();
-    
-    this->get_parameter("holonomic_speed_limiter",parameter_value_);
+
+    respond();
+
     Motors motor = holonomic_math(
-    msg.linear.x, msg.linear.y, msg.linear.z, 
-    msg.angular.x, msg.angular.y, msg.angular.z, 
-    parameter_value_);
+        msg.linear.x, msg.linear.y, msg.linear.z,
+        msg.angular.x, msg.angular.y, msg.angular.z,
+        holonomic_speed_limiter_parameter_);
 
     message.top_front_left = motor.top_front_left;
     message.top_front_right = motor.top_front_right;
@@ -49,10 +49,9 @@ private:
     publisher_->publish(message);
   }
 
-  int parameter_value_;
+  int holonomic_speed_limiter_parameter_;
   rclcpp::Subscription<geometry_msgs::msg::Twist>::SharedPtr subscription_;
   rclcpp::Publisher<blueshift_interfaces::msg::Motors>::SharedPtr publisher_;
-
 };
 
 int main(int argc, char *argv[])
