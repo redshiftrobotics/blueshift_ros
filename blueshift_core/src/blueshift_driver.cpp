@@ -31,7 +31,7 @@ private:
     RCLCPP_INFO(this->get_logger(), "I recieved Linear x:'%s'", std::to_string(msg.linear.x).c_str());
     auto message = blueshift_interfaces::msg::Motors();
     
-    this->
+    this->get_parameter("holonomic_speed_limiter",parameter_value_);
     Motors motor = holonomic_math(
     msg.linear.x, msg.linear.y, msg.linear.z, 
     msg.angular.x, msg.angular.y, msg.angular.z, 
