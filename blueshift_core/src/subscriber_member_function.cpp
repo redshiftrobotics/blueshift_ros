@@ -6,16 +6,16 @@
 #include "blueshift_interfaces/msg/num.hpp"
 using std::placeholders::_1;
 
-class MinimalSubscriber : public rclcpp::Node
+class Control : public rclcpp::Node
 {
   public:
     // node name
-    MinimalSubscriber()
+    Control()
     : Node("minimal_subscriber")
     {
       
       subscription_ = this->create_subscription<blueshift_interfaces::msg::Num>(
-      "topic", 10, std::bind(&MinimalSubscriber::topic_callback, this, _1));
+      "topic", 10, std::bind(&Control::topic_callback, this, _1));
     }
 
   private:
@@ -33,7 +33,7 @@ class MinimalSubscriber : public rclcpp::Node
 int main(int argc, char * argv[])
 {
   rclcpp::init(argc, argv);
-  rclcpp::spin(std::make_shared<MinimalSubscriber>());
+  rclcpp::spin(std::make_shared<Control>());
   rclcpp::shutdown();
   return 0;
 }
