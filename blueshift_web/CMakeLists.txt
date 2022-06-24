@@ -44,9 +44,9 @@ find_package(rosbridge_suite REQUIRED)
 # )
 
 # This is a simpler version of the add_custom_command and add_custom_target above
-# add_custom_target (npm-target ALL
-#   COMMAND cd ${CMAKE_SOURCE_DIR} && pnpm i && pnpm run build
-# )
+add_custom_target (web-target ALL
+  COMMAND cd ${CMAKE_SOURCE_DIR} && pnpm run build
+)
 
 # We don't need to copy this over, but it doesn't hurt to have it there
 install(FILES 
