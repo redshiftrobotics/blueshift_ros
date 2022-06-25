@@ -64,7 +64,7 @@
 
 	onMount(async () => {
 		registerGamepadConnectedListener((event: GamepadEvent) => {
-			gamepadState = setupGamepad(event.gamepad, 0.06, 30);
+			gamepadState = setupGamepad(event.gamepad.index, 0.06, 30);
 
 			notificationManager.addNotification({
 				title: 'JS: Gamepad Connected',

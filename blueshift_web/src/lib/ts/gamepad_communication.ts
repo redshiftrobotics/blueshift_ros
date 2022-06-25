@@ -43,21 +43,6 @@ export class GamepadState {
 }
 
 /**
- * This private function is used to set the state of the `gamepadConnected` store
- * @param state _true_: connected, _false_: not connected
- */
- let setGamepadConnected: (state: boolean) => void;
-
- /**
-  * This svelte readable store keeps track of whether we are connected to a gamepad or not. It is updated automatically
-  */
- export const gamepadConnected = readable<boolean>(false, function start(set) {
-	 setGamepadConnected = set;
- 
-	 return () => undefined;
- });
-
-/**
  * Registers a callback when the gamepad is connected
  *
  * @remarks
@@ -71,7 +56,6 @@ export function registerGamepadConnectedListener(callback: (event: GamepadEvent)
 	}
 	window.addEventListener('gamepadconnected', (event: GamepadEvent) => {
 		callback(event);
-		setGamepadConnected(true);
 	});
 }
 
@@ -88,10 +72,26 @@ export function registerGamepadDisconnectedListener(callback: (event: GamepadEve
 		throw new Error('window is undefined. This must be called within onMount()');
 	}
 	window.addEventListener('gamepaddisconnected', (event: GamepadEvent) => {
-		setGamepadConnected(false);
 		callback(event);
 	});
 }
+
+
+/**
+ * This svelte readable store keeps track of whether a gamepad is connected or not. It is updated automatically
+ */
+export const gamepadConnected = readable<boolean>(false, function start(set) {
+	if (typeof window !== 'undefined') {
+		window.addEventListener('gamepadconnected', () => {
+			set(true);
+		});
+		window.addEventListener('gamepaddisconnected', () => {
+			set(false);
+		});
+	}
+
+	return () => undefined;
+});
 
 // TODO: update this to work with multiple gamepads (keep track of them by their id, etc.)
 let lastGamepadState: GamepadState = new GamepadState();
@@ -166,24 +166,28 @@ function getGamepadState(gamepad: Gamepad, th: number): GamepadState {
 
 /**
  * Generates a readable store of the gamepad state
- * @param gamepad gamepad object get data from
+ * @param gamepadIndex gamepad id to get data from (0-3)
  * @param threshold threshold value for analog inputs (joysticks, triggers)
  * @param rate rate at which to update the gamepad state
  * @returns a readable store of the gamepad state
  */
 export function setupGamepad(
-	gamepad: Gamepad,
+	gamepadIndex: number,
 	threshold = 0.05,
 	rate = 60
 ): Readable<GamepadState> {
-	return readable(new GamepadState(), function start(set) {
-		const interval = setInterval(() => {
-			const gamepadState = getGamepadState(gamepad, threshold);
-			set(gamepadState);
-		}, 1000 / rate);
-
-		return () => {
-			clearInterval(interval);
-		};
-	});
+	if (!navigator.getGamepads()[gamepadIndex]) {
+		throw "Invalid gamepad ID"
+	} else {
+		return readable(new GamepadState(), function start(set) {
+			const interval = setInterval(() => {
+				const gamepadState = getGamepadState(navigator.getGamepads()[gamepadIndex]!, threshold);
+				set(gamepadState);
+			}, 1000 / rate);
+	
+			return () => {
+				clearInterval(interval);
+			};
+		});
+	}
 }
