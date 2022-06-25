@@ -4,24 +4,24 @@
 
 	import { onMount } from 'svelte';
 
-	onMount(() => {
-		// This generates notifications any errors that were generated from broken code
-		window.onerror = function (msg, source, lineNo, columnNo, error) {
-			notificationManager.addNotification({
-				title: `JS ${error?.name}: ${error?.message}`,
-				level: 'error',
-				subtitle: `${source}:${lineNo}:${columnNo}`,
-				caption: new Date().toLocaleString(),
-				type: 'permanent'
-			});
-			return true;
-		};
+	// onMount(() => {
+	// 	// This generates notifications any errors that were generated from broken code
+	// 	window.onerror = function (msg, source, lineNo, columnNo, error) {
+	// 		notificationManager.addNotification({
+	// 			title: `JS ${error?.name}: ${error?.message}`,
+	// 			level: 'error',
+	// 			subtitle: `${source}:${lineNo}:${columnNo}`,
+	// 			caption: new Date().toLocaleString(),
+	// 			type: 'permanent'
+	// 		});
+	// 		return true;
+	// 	};
 
-		// testing only
-		// setTimeout(() => {
-		// 	throw new Error('test');
-		// }, 500);
-	});
+	// 	// testing only
+	// 	// setTimeout(() => {
+	// 	// 	throw new Error('test');
+	// 	// }, 500);
+	// });
 </script>
 
 <slot />

@@ -43,6 +43,21 @@ export class GamepadState {
 }
 
 /**
+ * This private function is used to set the state of the `gamepadConnected` store
+ * @param state _true_: connected, _false_: not connected
+ */
+ let setGamepadConnected: (state: boolean) => void;
+
+ /**
+  * This svelte readable store keeps track of whether we are connected to a gamepad or not. It is updated automatically
+  */
+ export const gamepadConnected = readable<boolean>(false, function start(set) {
+	 setGamepadConnected = set;
+ 
+	 return () => undefined;
+ });
+
+/**
  * Registers a callback when the gamepad is connected
  *
  * @remarks
@@ -80,21 +95,6 @@ export function registerGamepadDisconnectedListener(callback: (event: GamepadEve
 
 // TODO: update this to work with multiple gamepads (keep track of them by their id, etc.)
 let lastGamepadState: GamepadState = new GamepadState();
-
-/**
- * This private function is used to set the state of the `gamepadConnected` store
- * @param state _true_: connected, _false_: not connected
- */
-let setGamepadConnected: (state: boolean) => void;
-
-/**
- * This svelte readable store keeps track of whether we are connected to a gamepad or not. It is updated automatically
- */
-export const gamepadConnected = readable<boolean>(false, function start(set) {
-	setGamepadConnected = set;
-
-	return () => undefined;
-});
 
 /**
  * returns 0 for any number within the threshold, and the number otherwise

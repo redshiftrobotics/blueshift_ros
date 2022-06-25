@@ -59,7 +59,6 @@
 	// }, 1000);
 
 	let mode: 'one_cam' | 'multi_cam' = 'one_cam';
-	$: cameraIcon = mode == 'one_cam' ? Grid20 : Checkbox20;
 
 	let gamepadState: Readable<GamepadState>;
 
@@ -113,10 +112,15 @@
 			});
 		}
 	);
-	let robotMovementTopic = topic<GeometryTwist, 'publish'>('/input', 'geometry_msgs/Twist', 'publish', {
-		linear: { x: 0, y: 0, z: 0 },
-		angular: { x: 0, y: 0, z: 0 }
-	});
+	let robotMovementTopic = topic<GeometryTwist, 'publish'>(
+		'/input',
+		'geometry_msgs/Twist',
+		'publish',
+		{
+			linear: { x: 0, y: 0, z: 0 },
+			angular: { x: 0, y: 0, z: 0 }
+		}
+	);
 
 	$: {
 		if ($gamepadConnected && $ROSConnected) {
@@ -158,7 +162,7 @@
 			/>
 		{/if}
 		<HeaderGlobalAction
-			icon={cameraIcon}
+			icon={mode == 'one_cam' ? Grid20 : Checkbox20}
 			on:click={() => {
 				if (mode == 'one_cam') {
 					mode = 'multi_cam';
