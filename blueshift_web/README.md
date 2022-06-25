@@ -84,3 +84,6 @@ ros2 launch blueshift_web simple.launch.py
 ```
 
 _Note: if there are any errors about missing packages, make download all dependencies as described [here](../README.md#install-dependencies)_
+
+## Notes
+Joystick functionality will only work correctly in a Chrome based browser (ie. Chrome or Chromium).
