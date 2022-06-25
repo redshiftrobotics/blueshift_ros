@@ -8,8 +8,8 @@ Motors holonomic_math(double lx, double ly, double lz, double ax, double ay, dou
     double bottom_scale = 1;
     double top_scale = 1
 
-        // limiter_type =0 for clamp limiter, 1 for 1/3 limiter and 2 for dynamic limiter
-        if (limiter_type == 1)
+    // limiter_type =0 for clamp limiter, 1 for 1/3 limiter and 2 for dynamic limiter
+    if (limiter_type == 1)
     {
         bottom_scale = 1 / 3;
         top_scale = 1 / 3;
@@ -53,9 +53,4 @@ Motors holonomic_math(double lx, double ly, double lz, double ax, double ay, dou
     }
 
     return m;
-}
-
-void test()
-{
-    std::cout << "test";
 }

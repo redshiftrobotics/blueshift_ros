@@ -4,7 +4,7 @@
 #include "rclcpp/rclcpp.hpp"
 #include "std_msgs/msg/string.hpp"
 #include "geometry_msgs/msg/twist.hpp"
-#include "holonomic.hpp"
+#include "blueshift_core/holonomic/holonomic.hpp"
 #include "blueshift_interfaces/msg/motors.hpp"
 
 class Control : public rclcpp::Node
