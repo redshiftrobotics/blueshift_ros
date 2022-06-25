@@ -1,43 +1,61 @@
 #include <algorithm>
 #include "holonomic.hpp"
 
-
-Motors holonomic_math(double lx, double ly, double lz, double ax, double ay, double az, int limiter_type){
+Motors holonomic_math(double lx, double ly, double lz, double ax, double ay, double az, int limiter_type)
+{
     Motors m;
 
-    double scale = 1;
+    double bottom_scale = 1;
+    double top_scale = 1
 
-
-    //limiter_type =0 for clamp limiter, 1 for 1/3 limiter and 2 for dynamic limiter
-    if (limiter_type == 1){
-        scale = 1/3;
+        // limiter_type =0 for clamp limiter, 1 for 1/3 limiter and 2 for dynamic limiter
+        if (limiter_type == 1)
+    {
+        bottom_scale = 1 / 3;
+        top_scale = 1 / 3;
     }
-    if (limiter_type == 2){
-        scale = 1/(abs(lx)+abs(ly)+abs(ax));
+    if (limiter_type == 2)
+    {
+        bottom_scale = 1 / (abs(lx) + abs(ly) + abs(az));
+        top_scale = 1 / (abs(lz) + abs(ax) + abs(ay));
     }
 
-    double x = scale * lx;
-    double y = scale * ly;
-    double r = scale * ax;
+    double x = bottom_scale * lx;
+    double y = bottom_scale * ly;
+    double yaw = bottom_scale * az;
 
-    if (limiter_type == 0){
-        m.bottom_front_left = std::clamp(y+x+r, (double)-1,(double) 1);
-        m.bottom_front_right = std::clamp(y-x-r,(double) -1, (double) 1);
-        m.bottom_back_left = std::clamp(y-x+r,(double) -1,(double) 1);
-        m.bottom_back_right = std::clamp(y+x-r, (double) -1, (double) 1);
+    double z = top_scale * lz;
+    double roll = top_scale * ax;
+    double pitch = top_scale * ay;
+
+    if (limiter_type == 0)
+    {
+        m.top_front_left = std::clamp(z - roll - pitch, (double)-1, (double)1);
+        m.top_front_right = std::clamp(z + roll - pitch, (double)-1, (double)1);
+        m.top_back_left = std::clamp(z - roll + pitch, (double)-1, (double)1);
+        m.top_back_right = std::clamp(z + roll + pitch, (double)-1, (double)1);
+        m.bottom_front_left = std::clamp(y + x + yaw, (double)-1, (double)1);
+        m.bottom_front_right = std::clamp(y - x - yaw, (double)-1, (double)1);
+        m.bottom_back_left = std::clamp(y - x + yaw, (double)-1, (double)1);
+        m.bottom_back_right = std::clamp(y + x - yaw, (double)-1, (double)1);
     }
-    
-    else{
-        m.bottom_front_left = y+x+r;
-        m.bottom_front_right = y-x-r;
-        m.bottom_back_left = y-x+r;
-        m.bottom_back_right = y+x-r;
+
+    else
+    {
+        m.top_front_left = z - roll - pitch;
+        m.top_front_right = z + roll - pitch;
+        m.top_back_left = z - roll + pitch;
+        m.top_back_right = z + roll + pitch;
+        m.bottom_front_left = y + x + yaw;
+        m.bottom_front_right = y - x - yaw;
+        m.bottom_back_left = y - x + yaw;
+        m.bottom_back_right = y + x - yaw;
     }
 
     return m;
 }
 
-void test(){
+void test()
+{
     std::cout << "test";
 }
-

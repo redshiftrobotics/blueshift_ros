@@ -13,7 +13,7 @@ public:
   Control()
       : Node("minimal_subscriber")
   {
-    this->declare_parameter("holonomic_speed_limiter", 0);
+    this->declare_parameter("holonomic_speed_limiter", 1);
     publisher_ = this->create_publisher<blueshift_interfaces::msg::Motors>("motor_speeds", 10);
     subscription_ = this->create_subscription<geometry_msgs::msg::Twist>(
         "input", 10, std::bind(&Control::topic_callback, this, std::placeholders::_1));
@@ -27,7 +27,7 @@ public:
 private:
   void topic_callback(const geometry_msgs::msg::Twist &msg)
   {
-    RCLCPP_INFO(this->get_logger(), "I received Linear x:'%s'", std::to_string(msg.linear.x).c_str());
+    RCLCPP_INFO(this->get_logger(), "I received Linear x:'%s'", std::to_string(msg.angular.z).c_str());
     auto message = blueshift_interfaces::msg::Motors();
 
     respond();

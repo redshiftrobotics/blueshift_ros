@@ -1,4 +1,5 @@
-struct Motors{
+struct Motors
+{
     double top_front_left;
     double bottom_front_left;
     double top_front_right;
@@ -10,5 +11,3 @@ struct Motors{
 };
 
 Motors holonomic_math(double lx, double ly, double lz, double ax, double ay, double az, int limiter_type);
-
-void test();
