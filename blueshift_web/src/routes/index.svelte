@@ -113,7 +113,7 @@
 			});
 		}
 	);
-	let robotMovementTopic = topic<GeometryTwist, 'publish'>('/topic', 'geometry_msgs/Twist', 'publish', {
+	let robotMovementTopic = topic<GeometryTwist, 'publish'>('/input', 'geometry_msgs/Twist', 'publish', {
 		linear: { x: 0, y: 0, z: 0 },
 		angular: { x: 0, y: 0, z: 0 }
 	});
