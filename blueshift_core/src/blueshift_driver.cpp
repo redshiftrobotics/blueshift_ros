@@ -4,14 +4,14 @@
 #include "rclcpp/rclcpp.hpp"
 #include "std_msgs/msg/string.hpp"
 #include "geometry_msgs/msg/twist.hpp"
-#include "blueshift_core/holonomic/holonomic.hpp"
+#include "holonomic/holonomic.hpp"
 #include "blueshift_interfaces/msg/motors.hpp"
 
 class Control : public rclcpp::Node
 {
 public:
   Control()
-      : Node("minimal_subscriber")
+      : Node("blueshift_control")
   {
     this->declare_parameter("holonomic_speed_limiter", 1);
     publisher_ = this->create_publisher<blueshift_interfaces::msg::Motors>("motor_speeds", 10);
@@ -28,25 +28,15 @@ private:
   void topic_callback(const geometry_msgs::msg::Twist &msg)
   {
     RCLCPP_INFO(this->get_logger(), "I received Linear x:'%s'", std::to_string(msg.angular.z).c_str());
-    auto message = blueshift_interfaces::msg::Motors();
 
     respond();
 
-    Motors motor = holonomic_math(
+    auto motor = holonomic_math(
         msg.linear.x, msg.linear.y, msg.linear.z,
         msg.angular.x, msg.angular.y, msg.angular.z,
         holonomic_speed_limiter_parameter_);
 
-    message.top_front_left = motor.top_front_left;
-    message.top_front_right = motor.top_front_right;
-    message.top_back_left = motor.top_back_left;
-    message.top_back_right = motor.top_back_right;
-    message.bottom_front_left = motor.bottom_front_left;
-    message.bottom_front_right = motor.bottom_front_right;
-    message.bottom_back_left = motor.bottom_back_left;
-    message.bottom_back_right = motor.bottom_back_right;
-
-    publisher_->publish(message);
+    publisher_->publish(motor);
   }
 
   int holonomic_speed_limiter_parameter_;
