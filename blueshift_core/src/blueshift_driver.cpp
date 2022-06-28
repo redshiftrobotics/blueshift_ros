@@ -27,7 +27,7 @@ public:
 private:
   void topic_callback(const geometry_msgs::msg::Twist &msg)
   {
-    RCLCPP_INFO(this->get_logger(), "I received Linear x:'%s'", std::to_string(msg.angular.z).c_str());
+    RCLCPP_INFO(this->get_logger(), "I received Linear x:'%s'", std::to_string(msg.linear.x).c_str());
 
     respond();
 
