@@ -13,7 +13,20 @@ public:
   Control()
       : Node("blueshift_control")
   {
-    this->declare_parameter("holonomic_speed_limiter", 1);
+    auto parameter_description = rcl_interfaces::msg::ParameterDescriptor();
+    parameter_description.set__name("Holonomic Speed Limiter Type");
+    parameter_description.set__description("A parameter to set the type of speed limiter we have on the holonomic drive. 0 for Clamping all speeds to 1. 1 for dividing all input variables by three. 2 for dynamic limiting");
+
+    auto range = rcl_interfaces::msg::IntegerRange();
+
+    range.from_value = 0;
+    range.to_value = 2;
+    range.step = 1;
+    
+    // parameter_description.set__integer_range(range);
+    
+
+    this->declare_parameter("holonomic_speed_limiter", 1, parameter_description);
     publisher_ = this->create_publisher<blueshift_interfaces::msg::Motors>("motor_speeds", 10);
     subscription_ = this->create_subscription<geometry_msgs::msg::Twist>(
         "input", 10, std::bind(&Control::topic_callback, this, std::placeholders::_1));
