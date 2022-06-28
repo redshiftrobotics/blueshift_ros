@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <math.h>
 #include "holonomic.hpp"
 #include "blueshift_interfaces/msg/motors.hpp"
 
@@ -18,8 +19,13 @@ blueshift_interfaces::msg::Motors holonomic_math(double lx, double ly, double lz
     }
     if (limiter_type == 2)
     {
-        bottom_scale = 1 / (abs(lx) + abs(ly) + abs(az));
-        top_scale = 1 / (abs(lz) + abs(ax) + abs(ay));
+        if (lx!= (double) 0 || ly!= (double) 0 || az!= (double) 0){
+            bottom_scale = (double) (1 / (fabs(lx) + fabs(ly) + fabs(az)));
+        }
+        
+        if (lz!=0 || ax!=0 || ay!=0){
+            top_scale = (double) (1 / (fabs(lz) + fabs(ax) + fabs(ay)));
+        }
     }
 
     double x = bottom_scale * lx;
