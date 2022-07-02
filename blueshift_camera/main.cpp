@@ -1,36 +1,101 @@
 #include <iostream>
 #include <gst/gst.h>
 
-// From this tutorial: https://medium.com/analytics-vidhya/creating-gstreamer-multimedia-pipeline-with-c-part-1-a7f0f86b5e1f
-
-int main(int arg, char *argv[])
+int main(int argc, char *argv[])
 {
-    GstElement *pipeline = nullptr;
-    GstBus *bus = nullptr;
-    GstMessage *msg = nullptr;
+    GstElement *pipeline, *source, *filter, *convert, *sink;
+    GstBus *bus;
+    GstMessage *msg;
+    GstStateChangeReturn ret;
 
-    // gstreamer initialization
-    gst_init(&arg, &argv);
+    /* Initialize GStreamer */
+    gst_init(&argc, &argv);
 
-    // building pipeline
-    pipeline = gst_parse_launch(
-        "playbin uri=https://www.freedesktop.org/software/gstreamer-sdk/data/media/sintel_trailer-480p.webm",
-        nullptr);
+    /* Create the elements */
+    source = gst_element_factory_make("videotestsrc", "source");
+    filter = gst_element_factory_make("vertigotv", "filter");
+    convert = gst_element_factory_make("videoconvert", "convert");
+    sink = gst_element_factory_make("autovideosink", "sink");
 
-    // start playing
-    gst_element_set_state(pipeline, GST_STATE_PLAYING);
+    /* Create the empty pipeline */
+    pipeline = gst_pipeline_new("test-pipeline");
 
-    // wait until error or EOS ( End Of Stream )
+    if (!pipeline || !source || !filter || !convert || !sink)
+    {
+        g_printerr("Not all elements could be created.\n");
+        return -1;
+    }
+
+    /* Build the pipeline */
+    //  gst-launch-1.0 -v videotestsrc ! vertigotv ! videoconvert ! autovideosink
+    gst_bin_add_many(GST_BIN(pipeline), source, filter, convert, sink, NULL);
+    if (gst_element_link(source, filter) != TRUE)
+    {
+        g_printerr("Elements source and filter could not be linked.\n");
+        gst_object_unref(pipeline);
+        return -1;
+    }
+    if (gst_element_link(filter, convert) != TRUE)
+    {
+        g_printerr("Elements filter and convert could not be linked.\n");
+        gst_object_unref(pipeline);
+        return -1;
+    }
+    if (gst_element_link(convert, sink) != TRUE)
+    {
+        g_printerr("Elements convert and sink could not be linked.\n");
+        gst_object_unref(pipeline);
+        return -1;
+    }
+
+    /* Modify the source's properties */
+    g_object_set(source, "pattern", 18, NULL);
+
+    /* Start playing */
+    ret = gst_element_set_state(pipeline, GST_STATE_PLAYING);
+    if (ret == GST_STATE_CHANGE_FAILURE)
+    {
+        g_printerr("Unable to set the pipeline to the playing state.\n");
+        gst_object_unref(pipeline);
+        return -1;
+    }
+
+    /* Wait until error or EOS */
     bus = gst_element_get_bus(pipeline);
     msg = gst_bus_timed_pop_filtered(bus, GST_CLOCK_TIME_NONE,
                                      static_cast<GstMessageType>(GST_MESSAGE_ERROR | GST_MESSAGE_EOS));
 
-    // free memory
-    if (msg != nullptr)
+    /* Parse message */
+    if (msg != NULL)
+    {
+        GError *err;
+        gchar *debug_info;
+
+        switch (GST_MESSAGE_TYPE(msg))
+        {
+        case GST_MESSAGE_ERROR:
+            gst_message_parse_error(msg, &err, &debug_info);
+            g_printerr("Error received from element %s: %s\n",
+                       GST_OBJECT_NAME(msg->src), err->message);
+            g_printerr("Debugging information: %s\n",
+                       debug_info ? debug_info : "none");
+            g_clear_error(&err);
+            g_free(debug_info);
+            break;
+        case GST_MESSAGE_EOS:
+            g_print("End-Of-Stream reached.\n");
+            break;
+        default:
+            /* We should not reach here because we only asked for ERRORs and EOS */
+            g_printerr("Unexpected message received.\n");
+            break;
+        }
         gst_message_unref(msg);
+    }
+
+    /* Free resources */
     gst_object_unref(bus);
     gst_element_set_state(pipeline, GST_STATE_NULL);
     gst_object_unref(pipeline);
-
     return 0;
 }
