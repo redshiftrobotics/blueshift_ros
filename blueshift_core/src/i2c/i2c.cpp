@@ -2,19 +2,21 @@ extern "C"
 {
 #include <linux/i2c-dev.h>
 #include <i2c/smbus.h>
+}
+
 #include <sys/ioctl.h>
 #include <fcntl.h>
 #include <unistd.h>
-}
-
 #include <string>
 #include "i2c.hpp"
 
 
-Bus::Bus(std::string busPath) : path(busPath) {};
+//g++ i2c.cpp -li2c -o test
+
+Bus::Bus(std::string busPath) : path(busPath) {}
 
 
-Device::Device(Bus &_bus, int _address)
+Device::Device(Bus & _bus, int _address) : bus(_bus), address(_address)
 {
     address = _address;
     bus = _bus;
@@ -61,14 +63,14 @@ uint8_t Device::readByte(uint8_t reg)
     return res;
 }
 
-void Device::writeWord(uint8_t reg, uint8_t dataLow, uint8_t dataHigh)
-{
-    // int res = i2c_smbus_write_word_data(file, reg, dataLowdataHigh);
-    // if (res < 0)
-    // {
-    //     // Error
-    // }
-}
+// void Device::writeWord(uint8_t reg, uint8_t dataLow, uint8_t dataHigh)
+// {
+//     int res = i2c_smbus_write_word_data(file, reg, dataLowdataHigh);
+//     if (res < 0)
+//     {
+//         // Error
+//     }
+// }
 
 // void Device::writeWordSwapped(uint8_t reg, uint8_t dataLow, uint8_t dataHigh)
 // {
@@ -91,4 +93,12 @@ void Device::writeByte(uint8_t reg, uint8_t data)
 int Device::getAddress()
 {
     return address;
+}
+
+int main(){
+    Bus b("/dev/i2c-8");
+    Device d(b,0x32);
+    d.writeByte(0x00,'h');
+
+    return 0;
 }
