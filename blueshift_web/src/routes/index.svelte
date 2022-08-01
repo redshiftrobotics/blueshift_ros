@@ -40,6 +40,7 @@
 	import { onMount } from 'svelte';
 
 	import log from '$lib/ts/logger';
+	import WebRtcVideo from '$lib/components/WebRTCVideo.svelte';
 
 	// testing only
 	// setTimeout(() => {
@@ -183,6 +184,7 @@
 					16x9
 					{$ROSConnected && $gamepadConnected} <br />
 					{JSON.stringify($gamepadState)}
+					<WebRtcVideo />
 				</Column>
 			</Row>
 		</Grid>
