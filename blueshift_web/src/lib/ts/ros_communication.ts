@@ -119,3 +119,32 @@ export function topic<T, direction extends publishSubscribe>(
 }
 
 export type Topic<T, direction extends publishSubscribe> = ReadableWriteableStore<T, direction>;
+
+/**
+ * Requsest and recieve data from a ROS service asynchronously
+ * @param serviceName the name of the topic to publish/subscribe to (ex: '/add_two_ints')
+ * @param messageType the name of the message type of the service (this is the ROS message name, not typscript, ex: std_msgs/String or geometry_msgs/Twist)
+ * @param request the request to send to the service, of type `req`
+ * @returns the response from the service, of type `res`
+ * 
+ * @example await service<{a: number, b: number}, {sum: number}>('/add_two_ints', 'example_interfaces/AddTwoInts', {a: 3, b: 4})
+ */
+export async function service<req, res>(
+	serviceName: string,
+	serviceType: string,
+	request: req
+): Promise<res> {
+	return new Promise<res>((resolve, reject) => {
+		var client = new ROSLIB.Service({
+			ros: ros,
+			name: serviceName,
+			serviceType: serviceType
+		});
+	
+		var serviceRequest = new ROSLIB.ServiceRequest(request);
+	
+		client.callService(serviceRequest, result => {
+			resolve(result)
+		});
+	})
+}

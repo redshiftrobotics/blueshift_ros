@@ -21,7 +21,8 @@
 		robotIP,
 		websocketPort,
 		ROSConnected,
-		topic
+		topic,
+		service
 	} from '$lib/ts/ros_communication';
 	import type { Topic } from '$lib/ts/ros_communication';
 
