@@ -1,0 +1,8 @@
+# msg type for sendinding offer
+string sdp
+string type
+
+---
+# msg type for what offer function returns
+string sdp
+string type

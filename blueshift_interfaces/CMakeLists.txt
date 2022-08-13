@@ -13,6 +13,7 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/Time.msg"
   "msg/Num.msg"
   "msg/Motors.msg"
+  "srv/WebRTCOfferCommunication.srv"
 
  )
 # uncomment the following section in order to fill in

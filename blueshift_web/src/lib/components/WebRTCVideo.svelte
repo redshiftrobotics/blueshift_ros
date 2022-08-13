@@ -1,9 +1,11 @@
 <script lang="ts">
 	import log from '$lib/ts/logger';
 	import { onDestroy } from 'svelte';
+	import { service } from '$lib/ts/ros_communication';
 
 	const pc = new RTCPeerConnection({
-		sdpSemantics: 'unified-plan'
+		// sdpSemantics: 'unified-plan', 
+		iceServers: [{urls: ['stun:stun.l.google.com:19302']}]
 	});
 
 	let video: HTMLVideoElement;
@@ -28,18 +30,20 @@
 				pc.addEventListener('icegatheringstatechange', checkState);
 			}
 		});
-		const response = await fetch('http://localhost:8080/offer', {
-			body: JSON.stringify({
-				sdp: pc.localDescription!.sdp,
-				type: pc.localDescription!.type
-			}),
-			headers: {
-				'Content-Type': 'application/json',
-				'Access-Control-Allow-Origin': '*'
-			},
-			method: 'POST'
-		});
-        await pc.setRemoteDescription(await response.json());
+		// const response = await fetch('http://localhost:8080/offer', {
+		// 	body: JSON.stringify({
+		// 		sdp: pc.localDescription!.sdp,
+		// 		type: pc.localDescription!.type
+		// 	}),
+		// 	headers: {
+		// 		'Content-Type': 'application/json',
+		// 		'Access-Control-Allow-Origin': '*'
+		// 	},
+		// 	method: 'POST'
+		// });
+		const response = await service<{sdp:string, type:string},{sdp:string, type:RTCSdpType}>('web_RTC_offer_communication','blueshift_interfaces/WebRTCOfferCommunication',{sdp:pc.localDescription!.sdp,type:pc.localDescription!.type}) 
+        await pc.setRemoteDescription(response);
+		console.log(response)
 	}
 
 	function start() {
@@ -54,7 +58,7 @@
 		negotiate();
 	}
 
-	start();
+	setTimeout(start,3000);
 	onDestroy(() => {
 		pc.close();
 	});
