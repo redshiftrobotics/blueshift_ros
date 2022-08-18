@@ -46,6 +46,7 @@ from av import VideoFrame
 import threading
 
 
+
 ROOT = os.path.dirname(__file__)
 
 frames = asyncio.Event()
@@ -102,12 +103,12 @@ async def offer():
             pcs.discard(pc)
 
     video_sender = pc.addTrack(
-        # MediaPlayer(
-        #     "/dev/video0",
-        #     format="v4l2",
-        #     options={"framerate": "30", "video_size": "640x480"},
-        # ).video
-        RosVideoStreamTrack()
+        MediaPlayer(
+            "/dev/video0",
+            format="v4l2",
+            options={"framerate": "30", "video_size": "640x480"},
+        ).video
+        # RosVideoStreamTrack()
     )
     # force_codec(pc, video_sender, 'video/H264')
 
@@ -119,8 +120,8 @@ async def offer():
     res.type = pc.localDescription.type
     done = True
 
-    while True:
-        time.sleep(0.01)
+    # while True:
+    #     time.sleep(0.01)
 
 
 def offerNotAsync(request, response):
@@ -231,7 +232,8 @@ async def mainAsync(args=None):
             if runOffer:
                 await offer()
                 runOffer = False
-            rate.sleep()
+            # rate.sleep()
+            await asyncio.sleep(0.1)
     except KeyboardInterrupt:
         pass
 
