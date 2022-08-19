@@ -49,7 +49,7 @@ import threading
 
 ROOT = os.path.dirname(__file__)
 
-frames = asyncio.Event()
+frames = False
 imgFrames = Image()
 req = ""
 res = ""
@@ -61,16 +61,33 @@ class RosVideoStreamTrack(VideoStreamTrack):
     def __init__(self):
         super().__init__()  # don't forget this!
         self.br = CvBridge()
-        print("rosvideostreamtrack init??")
+        print("________________rosvideostreamtrack init_________________??")
 
     async def recv(self):
-        print("rec function in rosvideostreamtrack")
-        await frames.wait()
-        global imgFrames
-        current_frame = self.br.imgmsg_to_cv2(imgFrames)
-        current_frame = VideoFrame.from_ndarray(current_frame, format="bgr24")
+        print("________________rec function in rosvideostreamtrack________________")
+        global frames
+        while frames == False:
+            asyncio.sleep(0.5)
 
-        frames.clear()
+        # await frames.wait()
+        print("________________frames.wait________________")
+        global imgFrames
+        print("________________imgFrames_______________")
+        current_frame = self.br.imgmsg_to_cv2(imgFrames)
+        # print('img frames:', imgFrames)
+        print('current frame cv2:',current_frame)
+        current_frame = VideoFrame.from_ndarray(current_frame, format="bgr24")
+        print('current frame aiortc:', current_frame)
+
+        pts, time_base = await self.next_timestamp()
+        print('pts:', pts)
+        print('time_base:', time_base)
+        # frame = self.frames[self.counter % 30]
+        current_frame.pts = pts
+        current_frame.time_base = time_base
+
+        # frames.clear()
+        frames = False
         return current_frame
 
 
@@ -103,14 +120,14 @@ async def offer():
             pcs.discard(pc)
 
     video_sender = pc.addTrack(
-        MediaPlayer(
-            "/dev/video0",
-            format="v4l2",
-            options={"framerate": "30", "video_size": "640x480"},
-        ).video
-        # RosVideoStreamTrack()
+        # MediaPlayer(
+        #     "/dev/video0",
+        #     format="v4l2",
+        #     options={"framerate": "30", "video_size": "640x480"},
+        # ).video
+        RosVideoStreamTrack()
     )
-    # force_codec(pc, video_sender, 'video/H264')
+    force_codec(pc, video_sender, 'video/H264')
 
     await pc.setRemoteDescription(offer)
 
@@ -167,7 +184,10 @@ class ImageSubscriber(Node):
         # self.get_logger().info('Receiving video frame')
         global imgFrames
         imgFrames = data
-        frames.set()
+        # print('imgFrames')
+        global frames
+        frames = True
+        # print('frames')
 
     def test(self, request, response):
         global req
@@ -206,15 +226,7 @@ class ImageSubscriber(Node):
 
 def main(args=None):
     logging.basicConfig(level=logging.DEBUG)
-    asyncio.run(mainAsync(args=args))
-
-async def mainAsync(args=None):
-    global runOffer
-
-    # Initialize the rclpy library
     rclpy.init(args=args)
-
-    # Create the node
     image_subscriber = ImageSubscriber()
 
     executor = rclpy.executors.MultiThreadedExecutor()
@@ -223,9 +235,28 @@ async def mainAsync(args=None):
     executor_thread = threading.Thread(target=executor.spin, daemon=True)
     executor_thread.start()
 
+    asyncio.run(mainAsync(args=args))
+
+    
+
+async def mainAsync(args=None):
+    global runOffer
+
+    # Initialize the rclpy library
+    # rclpy.init(args=args)
+
+    # Create the node
+    # image_subscriber = ImageSubscriber()
+
+    # executor = rclpy.executors.MultiThreadedExecutor()
+    # executor.add_node(image_subscriber)
+
+    # executor_thread = threading.Thread(target=executor.spin, daemon=True)
+    # executor_thread.start()
+
     # Spin the node so the callback function is called.
     # rclpy.spin(image_subscriber)
-    rate = image_subscriber.create_rate(10)
+    # rate = image_subscriber.create_rate(10)
 
     try:
         while rclpy.ok():
@@ -241,7 +272,7 @@ async def mainAsync(args=None):
 
     # Shutdown the ROS client library for Python
     rclpy.shutdown()
-    executor_thread.join()
+    # executor_thread.join()
 
     # Close all webrtc connections
     coros = [pc.close() for pc in pcs]
