@@ -17,6 +17,8 @@ class Device{
         //void writeWordSwapped(uint8_t reg, uint8_t dataLow, uint8_t dataHigh);
         void writeByte(uint8_t reg, uint8_t data);
         int getAddress();
+        uint16_t encode(float num);
+        float decode(uint16_t num);
     private:
         int address;
         Bus &bus;

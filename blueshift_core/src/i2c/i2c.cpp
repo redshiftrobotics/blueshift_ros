@@ -10,6 +10,7 @@ extern "C"
 #include <string>
 #include "i2c.hpp"
 #include <iostream>
+#include <math.h>
 
 
 //g++ i2c.cpp -li2c -o test
@@ -115,3 +116,15 @@ void Device::writeWord(uint8_t reg, uint8_t dataHigh, uint8_t dataLow)
     
 //     return 0;
 // }
+
+float decode(uint16_t num){
+    float temp = (float)num;
+    temp *= 1/(pow(2,15)-1);
+    return temp-1;
+}
+
+uint16_t encode(float num){
+    float temp = num+1;
+    temp*=pow(2,15)-1;
+    return (uint16_t)temp;
+}
