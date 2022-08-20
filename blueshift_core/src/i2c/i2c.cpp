@@ -9,6 +9,7 @@ extern "C"
 #include <unistd.h>
 #include <string>
 #include "i2c.hpp"
+#include <iostream>
 
 
 //g++ i2c.cpp -li2c -o test
@@ -31,25 +32,10 @@ Device::~Device()
     close(file);
 }
 
-uint16_t Device::readWord(uint8_t reg)
+int Device::getAddress()
 {
-    int res = i2c_smbus_read_word_data(file, reg);
-    if (res < 0)
-    {
-        // Error
-    }
-    return res;
+    return address;
 }
-
-// uint16_t Device::readWordSwapped(uint8_t reg)
-// {
-//     int res = i2c_smbus_read_word_data(file, reg);
-//     if (res < 0)
-//     {
-//         // Error
-//     }
-//     return res;
-// }
 
 uint8_t Device::readByte(uint8_t reg)
 {
@@ -61,10 +47,40 @@ uint8_t Device::readByte(uint8_t reg)
     return res;
 }
 
+void Device::writeByte(uint8_t reg, uint8_t data)
+{
+    int res = i2c_smbus_write_byte_data(file, reg, data);
+    if (res < 0)
+    {
+        // Error
+    }
+}
+
+
+uint16_t Device::readWord(uint8_t reg)
+{
+    int res = i2c_smbus_read_byte_data(file, reg);
+
+    if (res < 0)
+    {
+        std::cout << res << std::endl;
+    }
+
+    int res2 = i2c_smbus_read_byte_data(file,reg+1);
+    return ((uint16_t)res2<<8)+res;
+}
+
+
 void Device::writeWord(uint8_t reg, uint8_t dataHigh, uint8_t dataLow)
 {
-    int res = i2c_smbus_write_word_data(file, reg, ((uint16_t)dataLow << 8) | dataHigh);
+    int res = i2c_smbus_write_byte_data(file, reg, dataLow);
     if (res < 0)
+    {
+        // Error
+    }
+
+    int res2 = i2c_smbus_write_byte_data(file,reg+1,dataHigh);
+    if (res2 < 0)
     {
         // Error
     }
@@ -79,24 +95,23 @@ void Device::writeWord(uint8_t reg, uint8_t dataHigh, uint8_t dataLow)
 //     }
 // }
 
-void Device::writeByte(uint8_t reg, uint8_t data)
-{
-    int res = i2c_smbus_write_byte_data(file, reg, data);
-    if (res < 0)
-    {
-        // Error
-    }
-}
+// uint16_t Device::readWordSwapped(uint8_t reg)
+// {
+//     int res = i2c_smbus_read_word_data(file, reg);
+//     if (res < 0)
+//     {
+//         // Error
+//     }
+//     return res;
+// }
 
-int Device::getAddress()
-{
-    return address;
-}
 
 // int main(){
 //     Bus b("/dev/i2c-8");
-//     Device d(b,0x32);
-//     d.writeWord(0x00,'H','i');
+//     Device d(b,0x2a);
 
+//     d.writeWord(4,0x01,0x00);s
+//     std::cout << (int) d.readWord(4) << std::endl;
+    
 //     return 0;
 // }

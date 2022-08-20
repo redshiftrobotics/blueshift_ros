@@ -11,10 +11,10 @@ class Device{
         Device(Bus &_bus,int _address);
         ~Device();
         uint16_t readWord(uint8_t reg);
-        uint16_t readWordSwapped(uint8_t reg);
+        //uint16_t readWordSwapped(uint8_t reg);
         uint8_t readByte(uint8_t reg);
         void writeWord(uint8_t reg, uint8_t dataLow, uint8_t dataHigh);
-        void writeWordSwapped(uint8_t reg, uint8_t dataLow, uint8_t dataHigh);
+        //void writeWordSwapped(uint8_t reg, uint8_t dataLow, uint8_t dataHigh);
         void writeByte(uint8_t reg, uint8_t data);
         int getAddress();
     private:
