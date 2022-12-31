@@ -18,10 +18,6 @@ private:
   void topic_callback(const blueshift_interfaces::msg::Motors &msg)
   {
     RCLCPP_INFO(this->get_logger(), "I received '%f'", msg.top_front_left);
-    for (char c: std::to_string(msg.top_front_left)){
-      device.writeByte(0x00,c);
-    }
-    
   }
 
   Bus bus;
