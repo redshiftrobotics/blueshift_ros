@@ -55,6 +55,8 @@ req = ""
 res = ""
 done = False
 runOffer = False
+listener_time_complete = 0
+image_subscriber = ''
 
 
 class RosVideoStreamTrack(VideoStreamTrack):
@@ -64,15 +66,34 @@ class RosVideoStreamTrack(VideoStreamTrack):
         print("________________rosvideostreamtrack init_________________??")
 
     async def recv(self):
+
         print("________________rec function in rosvideostreamtrack________________")
         global frames
+        
+
         while frames == False:
-            asyncio.sleep(0.5)
+            asyncio.sleep(0.02)
+
+        global imgFrames 
+        global listener_time_complete 
+        
+
+        # =====================
+        img_time = imgFrames.header.stamp
+        img_time_complete = img_time.sec +(img_time.nanosec)/1000000000
+        current_time = image_subscriber.get_clock().now().to_msg()
+        recv_time_complete =  current_time.sec + (current_time.nanosec)/1000000000
+        # print('==========recv function difference===========:', recv_time_complete - img_time_complete)
+        listener_to_recv_latency = recv_time_complete - listener_time_complete 
+        print('============listener to recv latency=========', listener_to_recv_latency)
+        # =====================
+
+
 
         # await frames.wait()
-        print("________________frames.wait________________")
-        global imgFrames
-        print("________________imgFrames_______________")
+        # print("________________frames.wait________________")
+        # print("________________imgFrames_______________")
+
         current_frame = self.br.imgmsg_to_cv2(imgFrames)
         # print('img frames:', imgFrames)
         print('current frame cv2:',current_frame)
@@ -89,7 +110,6 @@ class RosVideoStreamTrack(VideoStreamTrack):
         # frames.clear()
         frames = False
         return current_frame
-
 
 def force_codec(pc, sender, forced_codec):
     kind = forced_codec.split("/")[0]
@@ -133,9 +153,9 @@ async def offer():
 
     await pc.setLocalDescription(await pc.createAnswer())
 
-    res.sdp = pc.localDescription.sdp
-    res.type = pc.localDescription.type
-    done = True
+    res.sdp = pc.localDescription.sdp #basically saying I am streaming video to you in h264
+    res.type = pc.localDescription.type # is this an answer or response (always response -- string)
+    done = True #saying once we have a response --> there is a forloop
 
     # while True:
     #     time.sleep(0.01)
@@ -169,32 +189,55 @@ class ImageSubscriber(Node):
         super().__init__("image_subscriber")
         self.srv = self.create_service(
             WebRTCOfferCommunication, "web_RTC_offer_communication", self.test
+            #we are telling ros that self.test is the call back function when we recieve an offer from the website.
         )
 
         self.subscription = self.create_subscription(
             Image, "video_frames", self.listener_callback, 10
         )
-        self.subscription  # prevent unused variable warning
+        self.subscription #prevent unused variable warning
 
     def listener_callback(self, data):
         """
         Callback function.
+        called everytime there is a new frame
         """
         # Display the message on the console
         # self.get_logger().info('Receiving video frame')
         global imgFrames
         imgFrames = data
-        # print('imgFrames')
+
+        # ===============================
+        img_time = imgFrames.header.stamp
+        img_time_complete = img_time.sec +(img_time.nanosec)/1000000000
+        # print('___________listener img frame header__________:',img_time_complete)
+        # imgFrames.header.stamp
+        current_time = self.get_clock().now().to_msg()
+        global listener_time_complete
+        listener_time_complete =  current_time.sec + (current_time.nanosec)/1000000000
+        # print('___________listener current time______________:', current_time_complete )
+        # print('++++++++++++++++listener time difference+++++++++++++++:', current_time_complete - img_time_complete)
+        # ===============================
+
+        # self.get_clock().now().to_msg()
         global frames
         frames = True
         # print('frames')
 
     def test(self, request, response):
+        """ 
+        this is call back function -- ros calles it for you. 
+        this is called when ros recieves the request from the website.
+        only called when ros asks to use the service. 
+        this function is ros so cannot send response to offer. 
+
+        """
         global req
         global res
         global runOffer
         req = request
         res = response
+        #req and res are global variables such that the asynch stuff can access it. 
 
         # executor = SingleThreadedExecutor()
         # executor.add_node(self)
@@ -207,7 +250,7 @@ class ImageSubscriber(Node):
         # executor.spin_until_future_complete(future)
         # print(future.result())
 
-        runOffer = True
+        runOffer = True # saying I have an offer to process (global variable)
 
         # gc = self.create_guard_condition(offer)
         # gc.trigger()
@@ -217,7 +260,7 @@ class ImageSubscriber(Node):
         # self.destroy_guard_condition(gc)
 
         while not done:
-            time.sleep(0.05)
+            time.sleep(0.03)
 
         print(res)
 
@@ -227,6 +270,8 @@ class ImageSubscriber(Node):
 def main(args=None):
     logging.basicConfig(level=logging.DEBUG)
     rclpy.init(args=args)
+
+    global image_subscriber
     image_subscriber = ImageSubscriber()
 
     executor = rclpy.executors.MultiThreadedExecutor()
