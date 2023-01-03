@@ -21,7 +21,7 @@ git clone https://github.com/redshiftrobotics/blueshift-ros.git
 ```bash
 sudo apt install -y python3-rosdep
 sudo rosdep init
-rosdep update
+rosdep update --include-eol-distros
 ```
 
 ### Install Dependencies
