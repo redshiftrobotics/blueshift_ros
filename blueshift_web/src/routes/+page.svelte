@@ -1,7 +1,7 @@
 <script lang="ts">
 	import {
 		Content,
-		Grid as CarbonGrid,
+		Grid,
 		Row,
 		Column,
 		HeaderNav,
@@ -10,7 +10,7 @@
 		HeaderGlobalAction
 	} from 'carbon-components-svelte';
 
-	import Grid from 'carbon-icons-svelte/lib/Grid.svelte';
+	import Thumbnail_2 from "carbon-icons-svelte/lib/Thumbnail_2.svelte";
 	import Checkbox from 'carbon-icons-svelte/lib/Checkbox.svelte';
 
 	import Header from '$lib/components/Header.svelte';
@@ -164,7 +164,7 @@
 			/>
 		{/if}
 		<HeaderGlobalAction
-			icon={mode == 'one_cam' ? Grid : Checkbox}
+			icon={mode == 'one_cam' ? Thumbnail_2 : Checkbox}
 			on:click={() => {
 				if (mode == 'one_cam') {
 					mode = 'multi_cam';
@@ -192,7 +192,7 @@
 	</Content>
 {:else if mode == 'multi_cam'}
 	<Content style="padding: var(--cds-spacing-05);">
-		<CarbonGrid style="max-width: 100%">
+		<Grid style="max-width: 100%">
 			<Row>
 				<Column aspectRatio="16x9" style="outline: 1px solid var(--cds-interactive-04)">16x9</Column
 				>
@@ -205,6 +205,6 @@
 				<Column aspectRatio="16x9" style="outline: 1px solid var(--cds-interactive-04)">16x9</Column
 				>
 			</Row>
-		</CarbonGrid>
+		</Grid>
 	</Content>
 {/if}

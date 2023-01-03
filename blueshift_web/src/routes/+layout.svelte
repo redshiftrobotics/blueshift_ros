@@ -28,7 +28,11 @@
 
 <OverlayToastNotifications />
 
-<style lang="scss">
-	// @use '@carbon/styles';
+<!-- Scss isn't working right now for some reason -->
+<!-- <style lang="scss">
+	@use '@carbon/styles';
+	// @import 'carbon-components-svelte/css/all.css';
+</style> -->
+<style>
 	@import 'carbon-components-svelte/css/all.css';
 </style>
