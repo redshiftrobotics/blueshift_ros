@@ -10,9 +10,9 @@
 		"sourceMap": true,
 		"strict": true,
 		"paths": {
-			"$lib": ["src/lib"],
-			"$lib/*": ["src/lib/*"],
-			"roslib": ["node_modules/roslib/build/roslib"]
+			"$lib": ["./src/lib"],
+			"$lib/*": ["./src/lib/*"],
+			"roslib": ["./node_modules/roslib/build/roslib"]
 		}
 	}
 }

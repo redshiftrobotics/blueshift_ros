@@ -8,22 +8,22 @@
 		HeaderGlobalAction,
 		HeaderNav,
 		ToastNotification,
-		Theme
+		Theme,
 	} from 'carbon-components-svelte';
 	import type { CarbonTheme } from 'carbon-components-svelte/types/Theme/Theme.svelte';
 
-	import Settings20 from 'carbon-icons-svelte/lib/Settings20';
-	import Debug20 from 'carbon-icons-svelte/lib/Debug20';
-	import SettingsAdjust20 from 'carbon-icons-svelte/lib/SettingsAdjust20';
-	import Drone20 from 'carbon-icons-svelte/lib/Drone20';
-	import Power20 from 'carbon-icons-svelte/lib/Power20';
-	import Restart20 from 'carbon-icons-svelte/lib/Restart20';
+	import Settings from 'carbon-icons-svelte/lib/Settings.svelte';
+	import Debug from 'carbon-icons-svelte/lib/Debug.svelte';
+	import SettingsAdjust from 'carbon-icons-svelte/lib/SettingsAdjust.svelte';
+	import Drone from 'carbon-icons-svelte/lib/Drone.svelte';
+	import Power from 'carbon-icons-svelte/lib/Power.svelte';
+	import Restart from 'carbon-icons-svelte/lib/Restart.svelte';
 
-	import Maximize20 from 'carbon-icons-svelte/lib/Maximize20';
-	import Minimize20 from 'carbon-icons-svelte/lib/Minimize20';
+	import Maximize from 'carbon-icons-svelte/lib/Maximize.svelte';
+	import Minimize from 'carbon-icons-svelte/lib/Minimize.svelte';
 
-	import Sun20 from 'carbon-icons-svelte/lib/Sun20';
-	import Moon20 from 'carbon-icons-svelte/lib/Moon20';
+	import Sun from 'carbon-icons-svelte/lib/Sun.svelte';
+	import Moon from 'carbon-icons-svelte/lib/Moon.svelte';
 	import Question from 'carbon-pictograms-svelte/lib/Question.svelte';
 	import Envelope from 'carbon-pictograms-svelte/lib/Envelope.svelte';
 	import SelectProduct from 'carbon-pictograms-svelte/lib/SelectProduct.svelte';
@@ -35,7 +35,7 @@
 
 	// Full screen handler (modified from: https://github.com/codechips/svelte-fullscreen-example)
 	let fs = false;
-	$: fullscreenIcon = fs ? Minimize20 : Maximize20;
+	$: fullscreenIcon = fs ? Minimize : Maximize;
 	let fsToggle: () => void;
 
 	onMount(() => {
@@ -95,7 +95,7 @@
 	const darkTheme: CarbonTheme = 'g100';
 	const lightTheme: CarbonTheme = 'white';
 	let theme: CarbonTheme = darkTheme;
-	$: themeIcon = theme === lightTheme ? Moon20 : Sun20;
+	$: themeIcon = theme === lightTheme ? Moon : Sun;
 
 	// Notification panel state
 	let isOpen = false;
@@ -113,8 +113,8 @@
 	<HeaderNav>
 		<!-- Add spacing to the right side with `--cds-spacing-05` otherwise they touch the divider -->
 		<div style="padding-right: var(--cds-spacing-05)">
-			<HeaderGlobalAction icon={Power20} />
-			<HeaderGlobalAction icon={Restart20} />
+			<HeaderGlobalAction icon={Power} />
+			<HeaderGlobalAction icon={Restart} />
 		</div>
 
 		{#if $$slots.middle_section}
@@ -147,10 +147,10 @@
 
 	<!-- Right side buttons -->
 	<HeaderUtilities>
-		<HeaderActionLink icon={Drone20} href="/" />
-		<HeaderActionLink icon={SettingsAdjust20} href="/copilot" />
-		<HeaderActionLink icon={Debug20} href="/debug" />
-		<HeaderActionLink icon={Settings20} href="/settings" />
+		<HeaderActionLink icon={Drone} href="/" />
+		<HeaderActionLink icon={SettingsAdjust} href="/copilot" />
+		<HeaderActionLink icon={Debug} href="/debug" />
+		<HeaderActionLink icon={Settings} href="/settings" />
 		<HeaderNav>
 			<!--
 				CustomHeaderAction is based on the source HeaderAction with a few chances

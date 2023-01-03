@@ -1,90 +1,124 @@
-<script lang="ts">
+<script>
 	/**
-	 * @typedef {{ delay?: number; duration?: number; easing?: (t: number) => number; }} HeaderActionSlideTransition
+	 * @event {null} open
+	 * @event {null} close
 	 */
+  
 	/** Set to `true` to open the panel */
 	export let isOpen = false;
+  
 	/**
-	 * Specify the icon to render
+	 * Specify the icon to render when the action panel is closed.
+	 * Defaults to `<Switcher size={20} />`
 	 * @type {typeof import("svelte").SvelteComponent}
 	 */
-	export let icon: any = AppSwitcher20;
+	export let icon = Switcher;
+  
 	/**
-	 * Specify the icon to render when the action panel is open
+	 * Specify the icon to render when the action panel is open.
+	 * Defaults to `<Close size={20} />`
 	 * @type {typeof import("svelte").SvelteComponent}
 	 */
-	export let closeIcon: any = Close20;
+	export let closeIcon = Close;
+  
 	/**
 	 * Specify the text
 	 * Alternatively, use the named slot "text" (e.g., <div slot="text">...</div>)
 	 * @type {string}
 	 */
-	export let text: string;
+	export let text = undefined;
+  
 	/** Obtain a reference to the button HTML element */
-	export let ref: HTMLButtonElement = undefined;
+	export let ref = null;
+  
 	/**
-	 * Customize the panel transition (i.e., `transition:slide`)
+	 * Customize the panel transition (i.e., `transition:slide`).
 	 * Set to `false` to disable the transition
-	 * @type {false | HeaderActionSlideTransition}
+	 * @type {false | import("svelte/transition").SlideParams}
 	 */
 	export let transition = { duration: 200 };
-	import { createEventDispatcher } from 'svelte';
-	import { slide } from 'svelte/transition';
-	import Close20 from 'carbon-icons-svelte/lib/Close20/Close20.svelte';
-	import AppSwitcher20 from 'carbon-icons-svelte/lib/AppSwitcher20/AppSwitcher20.svelte';
-	import { Icon } from 'carbon-components-svelte';
+  
+	import { createEventDispatcher } from "svelte";
+	import { slide } from "svelte/transition";
+	import Close from "carbon-icons-svelte/lib/Close.svelte";
+	import Switcher from "carbon-icons-svelte/lib/Switcher.svelte";
+  
 	const dispatch = createEventDispatcher();
-	let refPanel: HTMLDivElement;
-</script>
-
-<svelte:window
-	on:click={({ target }) => {
-		if (isOpen && !ref.contains(target) && !refPanel.contains(target)) {
-			isOpen = false;
-			dispatch('close');
-		}
-	}}
-/>
-
-<div>
-	<button
-		bind:this={ref}
-		type="button"
-		class:bx--header__action={true}
-		class:bx--header__action--active={isOpen}
-		class:action-text={text}
-		{...$$restProps}
-		on:click
-		on:click={() => {
-			isOpen = !isOpen;
-			dispatch(isOpen ? 'open' : 'close');
-		}}
-	>
-		<Icon render={icon} {...$$restProps} style={isOpen ? 'display: none' : ''} />
-		<Icon render={closeIcon} {...$$restProps} style={!isOpen ? 'display: none' : ''} />
-	</button>
+  
+	let refPanel = null;
+  </script>
+  
+  <svelte:window
+	on:click="{({ target }) => {
+	  if (isOpen && !ref.contains(target) && !refPanel.contains(target)) {
+		isOpen = false;
+		dispatch('close');
+	  }
+	}}"
+  />
+  
+  <button
+	bind:this="{ref}"
+	type="button"
+	class:bx--header__action="{true}"
+	class:bx--header__action--active="{isOpen}"
+	class:action-text="{text}"
+	{...$$restProps}
+	on:click
+	on:click|stopPropagation="{() => {
+	  isOpen = !isOpen;
+	  dispatch(isOpen ? 'open' : 'close');
+	}}"
+  >
 	{#if isOpen}
-		<div
-			bind:this={refPanel}
-			class:bx--header-panel={true}
-			class:bx--header-panel--expanded={true}
-			transition:slide={{
-				...transition,
-				duration: transition === false ? 0 : transition.duration
-			}}
-		>
-			<slot />
-		</div>
+	  <slot name="closeIcon">
+		<!-- MODIFICATION: Pass $$restProps down to the icon so it can access necessary data -->
+		<svelte:component this="{closeIcon}" {...$$restProps} size="{20}" />
+	  </slot>
+	{:else}
+	  <slot name="icon">
+		<!-- MODIFICATION: Pass $$restProps down to the icon so it can access necessary data -->
+		<svelte:component this="{icon}" {...$$restProps} size="{20}" />
+	  </slot>
 	{/if}
-</div>
-
-<style>
+	<!-- MODIFICATION: Remove text slot
+	<slot name="text">
+	  {#if text}<span>{text}</span>{/if}
+	</slot> -->
+  </button>
+  {#if isOpen}
+	<div
+	  bind:this="{refPanel}"
+	  class:bx--header-panel="{true}"
+	  class:bx--header-panel--expanded="{true}"
+	  transition:slide|local="{{
+		...transition,
+		duration: transition === false ? 0 : transition.duration,
+	  }}"
+	>
+	  <slot />
+	</div>
+  {/if}
+  
+  <style>
 	.action-text {
-		font-size: 16px;
-		line-height: 20px;
-		text-decoration: none;
-		color: #fff;
-		width: 100%;
-		padding: 0 1rem;
+	  display: inline-flex;
+	  align-items: center;
+	  width: auto;
+  
+	  /** 2px bottom padding aligns icon with `HeaderAction` */
+	  padding: 0 1rem 2px 1rem;
+  
+	  /** `body-short-01` styles */
+	  font-size: 0.875rem;
+	  line-height: 1.28572;
+	  letter-spacing: 0.16px;
+  
+	  /** Same color as `Header` platformName */
+	  color: #f4f4f4;
 	}
-</style>
+  
+	.action-text > span {
+	  margin-left: 0.75rem;
+	}
+  </style>

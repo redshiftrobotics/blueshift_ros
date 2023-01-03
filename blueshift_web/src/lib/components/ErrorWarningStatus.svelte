@@ -1,8 +1,8 @@
 <script lang="ts">
-	import Misuse20 from 'carbon-icons-svelte/lib/Misuse20';
-	import MisuseOutline20 from 'carbon-icons-svelte/lib/MisuseOutline20';
-	import WarningAlt20 from 'carbon-icons-svelte/lib/WarningAlt20';
-	import WarningAltFilled20 from 'carbon-icons-svelte/lib/WarningAltFilled20';
+	import Misuse from 'carbon-icons-svelte/lib/Misuse.svelte';
+	import MisuseOutline from 'carbon-icons-svelte/lib/MisuseOutline.svelte';
+	import WarningAlt from 'carbon-icons-svelte/lib/WarningAlt.svelte';
+	import WarningAltFilled from 'carbon-icons-svelte/lib/WarningAltFilled.svelte';
 
 	export let style: string;
 	export let numWarnings = 0;
@@ -11,15 +11,15 @@
 
 <div {style}>
 	{#if numErrors > 0}
-		<Misuse20 style="fill: var(--cds-support-01)" />
+		<Misuse size={20} style="fill: var(--cds-support-01)" />
 	{:else}
-		<MisuseOutline20 style="fill: var(--cds-support-01)" />
+		<MisuseOutline size={20} style="fill: var(--cds-support-01)" />
 	{/if}
 	<span class="span-text" style="margin-right: var(--cds-spacing-04);">{numErrors}</span>
 	{#if numWarnings > 0}
-		<WarningAltFilled20 style="fill: var(--cds-support-03)" />
+		<WarningAltFilled size={20} style="fill: var(--cds-support-03)" />
 	{:else}
-		<WarningAlt20 style="fill: var(--cds-support-03)" />
+		<WarningAlt size={20} style="fill: var(--cds-support-03)" />
 	{/if}
 	<span class="span-text" style="margin-right: var(--cds-spacing-04);">{numWarnings}</span>
 </div>
