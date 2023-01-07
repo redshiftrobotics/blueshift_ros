@@ -21,7 +21,7 @@ git clone https://github.com/redshiftrobotics/blueshift-ros.git
 ```bash
 sudo apt install -y python3-rosdep
 sudo rosdep init
-rosdep update
+rosdep update --include-eol-distros
 ```
 
 ### Install Dependencies
@@ -38,5 +38,5 @@ To build the whole project run `colcon build`.
 Note that you will need to follow the installation instructions in [blueshift_web](./blueshift_web/README.md) before it will build.
 
 - if you get the error `AssertionError: No verb extentions` follow [these instructions](https://github.com/aws-robotics/aws-iot-bridge-example/issues/2#issuecomment-810040837)
-To build specific packages run `colcon build --packages-select YOUR_PKG_NAME`
+- To build specific packages run `colcon build --packages-select YOUR_PKG_NAME`
 - `--event-handlers console_direct+` can be added to the end of any `colcon` command to enable verbose output
