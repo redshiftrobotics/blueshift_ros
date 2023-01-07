@@ -30,7 +30,7 @@ class MinimalSubscriber(Node):
     def listener_callback(self, msg):
         self.get_logger().info('I heard: "%s"' % msg.top_front_left)
 
-        # self.motor1.duty_cycle = msg.top_front_left
+        self.motor1.duty_cycle = int((((msg.top_front_left)+1)/2)*0xffff)
 
 
 
