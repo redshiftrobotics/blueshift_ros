@@ -54,7 +54,7 @@ private:
 
     respond();
 
-    geometry_msgs::msg::Twist twist = msg.twist;
+    geometry_msgs::msg::Twist* twist = &msg.twist;
 
     auto motor = holonomic_math(
         twist.linear.x, twist.linear.y, twist.linear.z,
