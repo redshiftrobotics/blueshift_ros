@@ -23,15 +23,10 @@ ament_target_dependencies(listener rclcpp blueshift_interfaces)
 add_executable(control src/blueshift_driver.cpp src/holonomic/holonomic.cpp)
 ament_target_dependencies(control rclcpp blueshift_interfaces geometry_msgs)
 
-add_executable(hardware src/blueshift_hardware.cpp src/i2c/i2c.cpp)
-ament_target_dependencies(hardware rclcpp blueshift_interfaces)
-target_link_libraries(hardware i2c)
-
 
 install(TARGETS
   listener
   control
-  hardware
   DESTINATION lib/${PROJECT_NAME})
 
 
