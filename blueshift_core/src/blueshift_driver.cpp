@@ -31,9 +31,9 @@ public:
     parameter_description.integer_range.at(0) = range;
     //End of BS
     
-    // // create timer to run PID loop
-    // timer_ = this->create_wall_timer(
-    //   500ms, std::bind(&Control::run_PID, this));
+    // create timer to run PID loop
+    PID_timer_ = this->create_wall_timer(
+      20ms, std::bind(&Control::run_PID, this));
     
     this->declare_parameter("holonomic_speed_limiter", 2, parameter_description);
     publisher_ = this->create_publisher<blueshift_interfaces::msg::Motors>("motor_speeds", 10);
@@ -47,7 +47,7 @@ public:
   }
 
 private:
-  void topic_callback(const geometry_msgs::msg::Twist &msg)
+  void topic_callback(const geometry_msgs::msg::TwistStamped &msg)
   {
 
     RCLCPP_INFO(this->get_logger(), "I received Linear x:'%s'", std::to_string(msg.linear.x).c_str());
@@ -56,18 +56,24 @@ private:
 
     // geometry_msgs::msg::Twist* twist = &msg.twist;
 
-    auto motor = holonomic_math(
-        msg.linear.x, msg.linear.y, msg.linear.z,
-        msg.angular.x, msg.angular.y, msg.angular.z,
-        holonomic_speed_limiter_parameter_);
+    // auto motor = holonomic_math(
+    //     msg.linear.x, msg.linear.y, msg.linear.z,
+    //     msg.angular.x, msg.angular.y, msg.angular.z,
+    //     holonomic_speed_limiter_parameter_);
 
-    publisher_->publish(motor);
+    // publisher_->publish(motor);
   }
 
   int holonomic_speed_limiter_parameter_;
   rclcpp::Subscription<geometry_msgs::msg::Twist>::SharedPtr subscription_;
   rclcpp::Publisher<blueshift_interfaces::msg::Motors>::SharedPtr publisher_;
 };
+
+  /* Called periodically, runs PID loop to adjust motor values to reach setpoint based on some sort of input value */
+  void run_PID() {
+
+    publisher_->publish(motor);
+  }
 
 int main(int argc, char *argv[])
 {
